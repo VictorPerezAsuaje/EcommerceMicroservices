@@ -4,9 +4,11 @@ using Services.Auth.Domain;
 
 namespace Services.Auth.Infrastructure;
 
-public class AppDbContext : IdentityDbContext<AppUser>
+public class AuthDbContext : IdentityDbContext<AppUser>
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
+    {
+    }
 
     public DbSet<AppUser> Users { get; set; }
 

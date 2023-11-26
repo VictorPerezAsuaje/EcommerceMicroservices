@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Services.Auth.Domain;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,9 +11,9 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly JwtOptions _options;
 
-    public JwtTokenGenerator(JwtOptions options)
+    public JwtTokenGenerator(IOptions<JwtOptions> options)
     {
-        _options = options;
+        _options = options.Value;
     }
 
     public string GenerateToken(AppUser user, IEnumerable<string> roles)

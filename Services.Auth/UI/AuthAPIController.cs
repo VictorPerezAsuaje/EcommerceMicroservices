@@ -1,18 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Services.Auth.Application;
 using Services.Auth.Domain;
-using System.Net;
 
 namespace Services.Auth.Controllers;
 
 
 [ApiController]
-[Route("[controller]")]
-public class AuthAPIController : ControllerBase
+[Route("auth")]
+public class AuthController : ControllerBase
 {
     IAuthService _authService;
 
-    public AuthAPIController(IAuthService authService)
+    public AuthController(IAuthService authService)
     {
         _authService = authService;
     }
@@ -24,7 +23,7 @@ public class AuthAPIController : ControllerBase
         await Task.Delay(new Random().Next(50, 200));
         try
         {
-            Result result = await _authService.Register(dto);
+            ResponseDTO result = (await _authService.Register(dto)).ToResponseDTO();
 
             if (result.IsFailure)
                 return BadRequest(result);
@@ -46,7 +45,7 @@ public class AuthAPIController : ControllerBase
 
         try
         {
-            Result result = await _authService.Login(dto);
+            var result = (await _authService.Login(dto)).ToResponseDTO();
 
             if (result.IsFailure)
                 return BadRequest(result);
