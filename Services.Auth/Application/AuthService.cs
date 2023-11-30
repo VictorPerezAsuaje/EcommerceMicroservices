@@ -6,6 +6,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Services.Auth.Application;
 
+public interface IAuthService
+{
+    Task<Result> Register(RegistrationRequestDTO request);
+    Task<Result<string>> Login(LoginRequestDTO request);
+}
+
 public class AuthService : IAuthService
 {
     private readonly AuthDbContext _context;   

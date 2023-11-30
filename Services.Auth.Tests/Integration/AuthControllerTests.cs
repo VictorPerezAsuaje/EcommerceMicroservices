@@ -14,30 +14,20 @@ using System.Text.Json;
 
 namespace Services.Auth.Tests.Integration;
 
-public class AuthControllerTests : AuthWebApplicationFactory, IClassFixture<AuthControllerTests>
+[CollectionDefinition("Auth")]
+public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;
-    private readonly AuthWebApplicationFactory _factory;
+    private readonly CustomWebApplicationFactory _factory;
 
-    public AuthControllerTests()
+    public AuthControllerTests(CustomWebApplicationFactory factory)
     {
-        AuthDbContext? context = null;
-        _factory = new AuthWebApplicationFactory();
-        _client = _factory
-            .WithWebHostBuilder(builder =>
-            {
-                builder.ConfigureTestServices(services =>
-                {
-                    services.AddScoped<IAuthService, AuthService>();
-                    context = services.BuildServiceProvider().GetService<AuthDbContext>();
-                });
-            })
-            .CreateClient(new WebApplicationFactoryClientOptions()
+        _client = factory.CreateClient(new WebApplicationFactoryClientOptions()
             {
                 AllowAutoRedirect = false
             });
 
-        DbInitializer.SeedData(context);
+        factory.CleanupDatabase();
     }
 
     [Theory]

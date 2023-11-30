@@ -6,4 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+	<Target Name="Tailwind" AfterTargets="Build">
+		<Exec Command="npm run style:build" />
+	</Target>
 </Project>

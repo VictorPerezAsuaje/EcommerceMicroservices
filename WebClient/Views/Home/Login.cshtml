@@ -1,0 +1,36 @@
+﻿<div class="p-8 flex flex-col gap-8">
+    <h2 class="text-center text-2xl text-zuccini-900 font-extrabold">My Account</h2>
+
+    <div class="flex flex-col lg:flex-row gap-8 min-h-[50vh] p-16">
+        <div class="border border-gray-nurse-100 h-full flex-1 p-16">
+            <header class="text-center mb-8">
+                <h3 class="text-xl text-zuccini-900 font-bold uppercase mb-4">Login</h3>
+                <p class="text-sm text-gray-nurse-500">
+                    If you have an account with us, please log in.
+                </p>
+
+                <p class="text-rose-600">
+                    @* {{ validationMessage }} *@
+                </p>
+            </header>
+
+            <form id="loginForm" form="loginForm">
+                <input class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Email" type="email" />
+                <input class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Password" type="password" />
+            </form>
+
+            <footer class=" flex flex-row justify-between gap-8 items-center mt-4">
+                <button class="bg-zuccini-700 text-white font-bold text-sm p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 w-fit" type="submit" form="loginForm">SIGN IN</button>
+                <a asp-controller="Home" asp-action="ForgotPassword" class="text-sm text-gray-nurse-700 underline underline-offset-2 hover:underline-none">Forgot your password?</a>
+            </footer>
+        </div>
+
+        <div class="border border-gray-nurse-100 flex-1 p-16 flex flex-col justify-between items-center gap-8 h-full">
+            <h3 class="text-xl text-zuccini-900 font-bold uppercaseflex-1">New customer?</h3>
+            <p class="text-sm text-gray-nurse-500 ">
+                Registering for this site allows you to access your order status and history. We'll get a new account set up for you in no time. For this will only ask you for information necessary to make the purchase process faster and easier.
+            </p>
+            <a asp-controller="Home" asp-action="Register" class="bg-zuccini-700 text-white font-bold text-sm p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 w-fit">CREATE AN ACCOUNT</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,30 @@
+﻿@using WebClient.Controllers
+@model List<ProductDTO>
+
+@foreach (var product in Model)
+{
+<article class="flex flex-col justify-center text-center">
+    <div class="relative overflow-hidden group h-[350px]">
+        <div class="absolute -bottom-10 w-full group-hover:-translate-y-20 transition-all ease-in-out duration-500">
+            <div class="flex flex-row justify-between mx-auto bg-white p-2 rounded-full w-fit gap-4">
+                <button class="border-2 text-zuccini-800 bg-white border-zuccini-800 hover:bg-zuccini-800 hover:text-white rounded-full  text-xs aspect-square w-8 transition-all duration-200 ease-in-out">
+                    <i class="fa-solid fa-heart"></i>
+                </button>
+                <button class="border-2 text-zuccini-800 bg-white border-zuccini-800 hover:bg-zuccini-800 hover:text-white rounded-full  text-xs aspect-square w-8 transition-all duration-200 ease-in-out">
+                    <i class="fa-solid fa-shopping-cart"></i>
+                </button>
+                <a asp-controller="Shop" asp-action="Product" asp-route-id="@product.Id" class="flex justify-center items-center border-2 text-zuccini-800 bg-white border-zuccini-800 hover:bg-zuccini-800 hover:text-white rounded-full text-xs aspect-square w-8 transition-all duration-200 ease-in-out">
+                    <i class="fa-solid fa-magnifying-glass-plus"></i>
+                </a>
+            </div>
+        </div>
+
+            <img src="https://source.unsplash.com/random/350x500/?@product.Type.Name,@product.Name,@product.Id" class="object-cover h-[350px] w-full mb-4" />
+    </div>
+
+    <h4 class="text-md text-zuccini-900 mb-2 mt-4 hover:font-bold">
+        <a asp-controller="Shop" asp-action="Product" asp-route-id="@product.Id">@product.Name</a>
+    </h4>
+        <p>@product.Price.ToString("c")</p>
+</article>
+}

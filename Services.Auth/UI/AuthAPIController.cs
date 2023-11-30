@@ -19,8 +19,6 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO dto)
     {
-        // Simulate bandwidth latency
-        await Task.Delay(new Random().Next(50, 200));
         try
         {
             ResponseDTO result = (await _authService.Register(dto)).ToResponseDTO();
@@ -40,9 +38,6 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDTO dto)
     {
-        // Simulate bandwidth latency
-        await Task.Delay(new Random().Next(50, 200));
-
         try
         {
             var result = (await _authService.Login(dto)).ToResponseDTO();

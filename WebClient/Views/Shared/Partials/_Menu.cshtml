@@ -1,0 +1,218 @@
+﻿<nav class="bg-white border-gray-200 fixed top-0 w-full z-30 shadow-lg">
+    <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen py-6 px-8">
+        <a asp-controller="Home" asp-action="Index" class="flex items-center space-x-3" (click)="closeMegaMenu()">
+            <img src="img/plants-logo.png" class="h-14" alt="Victor Pérez Asuaje Logo" />
+        </a>
+        <button type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+            <span class="sr-only">Open main menu</span>
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
+            </svg>
+        </button>
+        <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1">
+            <ul class="flex flex-col mt-4 font-medium md:flex-row md:mt-0 md:space-x-8 text-lg">
+                <li>
+                    <button class="flex items-center justify-between w-full py-2 px-3 font-medium text-gray-900 border-b border-gray-100 md:w-auto hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-zuccini-600 md:p-0" onclick="toggleMegaMenu('plants')">
+                        Plants
+                    </button>
+                </li>
+                <li>
+                    <button class="flex items-center justify-between w-full py-2 px-3 font-medium text-gray-900 border-b border-gray-100 md:w-auto hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-zuccini-600 md:p-0" onclick="toggleMegaMenu('bulbs')">
+                        Bulbs
+                    </button>
+                </li>
+                <li>
+                    <button class="flex items-center justify-between w-full py-2 px-3 font-medium text-gray-900 border-b border-gray-100 md:w-auto hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-zuccini-600 md:p-0" onclick="toggleMegaMenu('seeds')">
+                        Seeds
+                    </button>
+                </li>
+                <li>
+                    <button class="flex items-center justify-between w-full py-2 px-3 font-medium text-gray-900 border-b border-gray-100 md:w-auto hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-zuccini-600 md:p-0" onclick="toggleMegaMenu('materials')">
+                        Materials
+                    </button>
+                </li>
+                <li>
+                    <button class="flex items-center justify-between w-full py-2 px-3 font-medium text-gray-900 border-b border-gray-100 md:w-auto hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-zuccini-600 md:p-0" onclick="toggleMegaMenu('tools')">
+                        Tools
+                    </button>
+                </li>
+                <li>
+                    <a routerLink="/blog" class="block py-2 px-3 text-gray-900 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-zuccini-700 md:p-0  ">Blog</a>
+                </li>
+            </ul>
+        </div>
+        <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-2 gap-3">
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Home" asp-action="Login" class="text-zuccini-700 hover:text-zuccini-800 hover:bg-gray-50 focus:ring-zuccini-300 focus:ring-4 text-lg px-2.5 aspect-square rounded-full my-auto flex items-center justify-center">
+                    <i class="fa-solid fa-sign-in"></i>
+                </a>
+            }
+            else
+            {
+                <button (click)="this.auth.logout()" class="text-zuccini-700 hover:text-zuccini-800 hover:bg-gray-50 focus:ring-zuccini-300 focus:ring-4 text-lg px-2.5 aspect-square rounded-full my-auto flex items-center justify-center rotate-180">
+                    <i class="fa-solid fa-sign-in"></i>
+                </button>
+            }
+
+            <button class="relative text-zuccini-700 hover:text-zuccini-800 hover:bg-gray-50 focus:ring-zuccini-300 focus:ring-4 text-lg px-2.5 aspect-square rounded-full my-auto flex items-center justify-center" onclick="openCartMenu()">
+                <span class="absolute top-0 right-0 bg-golden-600 text-white h-4 text-xs aspect-square rounded-full">
+                    @* {{ cartService.getCartItems().length }} *@ 0
+                </span>
+                <i class="fa-solid fa-cart-shopping"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="plants" class="megamenu mt-1 bg-white border-gray-200 border-y" hidden>
+        <ul class="grid max-w-screen-xl px-4 py-5 mx-auto text-gray-900 sm:grid-cols-2 md:grid-cols-3 md:px-6">
+            <li>
+                <a asp-controller="Shop" asp-action="Index" asp-route-type="plants" asp-route-category="Perennials" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                    <div class="font-semibold">Perennials</div>
+                    <span class="text-sm text-gray-500 ">Explore our collection of perennial plants that come back year after year, adding beauty to your garden effortlessly.</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Shop" asp-action="Index" asp-route-type="plants" asp-route-category="Roses" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                    <div class="font-semibold">Roses</div>
+                    <span class="text-sm text-gray-500 ">Discover the elegance and fragrance of our rose varieties, perfect for gardens, bouquets, and special occasions.</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Shop" asp-action="Index" asp-route-type="plants" asp-route-category="Climbers" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                    <div class="font-semibold">Climbers</div>
+                    <span class="text-sm text-gray-500 ">Find climbing plants that bring vertical interest to your garden, creating stunning natural backdrops.</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Shop" asp-action="Index" asp-route-type="plants" asp-route-category="Indoor" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                    <div class="font-semibold">Indoor</div>
+                    <span class="text-sm text-gray-500 ">Enhance your indoor spaces with our selection of houseplants, bringing greenery and freshness to your home.</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Shop" asp-action="Index" asp-route-type="plants" asp-route-category="Outdoor" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                    <div class="font-semibold">Outdoor</div>
+                    <span class="text-sm text-gray-500 ">Elevate your outdoor areas with our outdoor plant options, making your garden or patio more inviting and beautiful.</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Shop" asp-action="Index" asp-route-type="plants" asp-route-category="Bedding" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                    <div class="font-semibold">Bedding</div>
+                    <span class="text-sm text-gray-500 ">Create cozy and colorful garden beds with our bedding plants, transforming your outdoor space.</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div id="bulbs" class="megamenu mt-1 bg-white border-gray-200 border-y" hidden>
+        <ul class="grid max-w-screen-xl px-4 py-5 mx-auto text-gray-900 sm:grid-cols-2 md:grid-cols-3 md:px-6">
+            <li>
+                <a asp-controller="Shop" asp-action="Index" asp-route-type="bulbs" asp-route-category="Tulips" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                    <div class="font-semibold">Tulips</div>
+                    <span class="text-sm text-gray-500 ">Brighten your garden with vibrant tulip varieties, adding a burst of color and charm in the spring.</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Shop" asp-action="Index" asp-route-type="bulbs" asp-route-category="Daffodils" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                    <div class="font-semibold">Daffodils</div>
+                    <span class="text-sm text-gray-500 ">Welcome spring with the cheerful blooms of daffodils, a classic and beloved flower for your garden.</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Shop" asp-action="Index" asp-route-type="bulbs" asp-route-category="Alliums" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                    <div class="font-semibold">Alliums</div>
+                    <span class="text-sm text-gray-500 ">Add a touch of elegance to your garden with alliums, known for their unique spherical flower heads.</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Shop" asp-action="Index" asp-route-type="bulbs" asp-route-category="Iris" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                    <div class="font-semibold">Iris</div>
+                    <span class="text-sm text-gray-500 ">Explore the beauty of iris flowers, available in a wide range of colors, to enhance your garden's appeal.</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Shop" asp-action="Index" asp-route-type="bulbs" asp-route-category="Amaryllis" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                    <div class="font-semibold">Amaryllis</div>
+                    <span class="text-sm text-gray-500 ">Cultivate stunning amaryllis bulbs, known for their large, striking blooms, as a centerpiece in your garden.</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Shop" asp-action="Index" asp-route-type="bulbs" asp-route-category="Muscari" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                    <div class="font-semibold">Muscari</div>
+                    <span class="text-sm text-gray-500 ">Create a charming atmosphere with muscari flowers, also called grape hyacinths, for a unique garden touch.</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div id="seeds" class="megamenu mt-1 bg-white border-gray-200 border-y" hidden>
+        <ul class="grid max-w-screen-xl px-4 py-5 mx-auto text-gray-900 sm:grid-cols-2 md:grid-cols-3 md:px-6"></ul>
+    </div>
+
+    <div id="materials" class="megamenu mt-1 bg-white border-gray-200 border-y" hidden>
+        <ul class="grid max-w-screen-xl px-4 py-5 mx-auto text-gray-900 sm:grid-cols-2 md:grid-cols-3 md:px-6"></ul>
+    </div>
+
+    <div id="tools" class="megamenu mt-1 bg-white border-gray-200 border-y" hidden>
+        <ul class="grid max-w-screen-xl px-4 py-5 mx-auto text-gray-900 sm:grid-cols-2 md:grid-cols-3 md:px-6"></ul>
+    </div>
+
+
+    <aside id="cart" class="fixed h-screen w-3/4 md:w-1/2 lg:w-1/3 bg-white shadow-lg top-0 p-8 flex flex-col transition-all ease-in-out duration-200 -right-3/4 md:-right-1/2 lg:-right-1/3">
+        <header class="flex flex-row justify-between items-center flex-1 max-h-[10vh]">
+            <h3 class="text-lg font-bold">Cart items</h3>
+
+            <button onclick="closeCartMenu()">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </header>
+
+        <div id="cartItems" class="max-h-[80vh] flex-[9] overflow-y-auto">
+@*             @foreach (var item in cartItems)
+            {
+                <div class="flex flex-row justify-between gap-4 mb-4">
+                    <div class="flex flex-row gap-4">
+                        <button class="my-auto text-[0.5rem] text-rose-600 border-rose-600 border h-4 aspect-square rounded-full font-light" (click)="removeItem(item.id)">
+                            <i class="fa-solid fa-x"></i>
+                        </button>
+
+                        <img src="https://source.unsplash.com/random/50x50/?{{item.name}}, {{item.id }}" class="object-cover aspect-square w-[50px]">
+
+                        <div>
+                            <h4>{{ item.name }}</h4>
+                            <span class="text-gray-nurse-500 text-sm">
+                                {{ item.price | currency }}
+                                <span class="mx-2">x</span>
+                                <input type="number" min="1" step="1" value="{{ item.amount }}" (change)="updateAmount(item.id, $event)" />
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-row flex-wrap gap-4 text-right items-center">
+                        <span class="font-bold">{{ item.amount * item.price | currency }}</span>
+                    </div>
+                </div>
+            }*@        
+        </div>
+
+        <footer class="flex-1 flex flex-row justify-between max-h-[10vh] border-t-2 border-gray-nurse-200 pt-8 items-center">
+            <span>Total: </span>
+            <span class="font-bold text-lg">
+                <span>@* {{ cartService.getTotalPrice() | currency }} *@</span>
+
+                @* @if (this.cartService.discountApplied !== 0)
+                {
+                    <span class="flex items-center bg-rose-600 text-white text-xs rounded-lg font-bold h-6 px-1">
+                        {{ this.cartService.discountApplied * 100 }}% discount
+                    </span>
+                } *@
+            </span>
+
+
+        </footer>
+    </aside>
+</nav>
+
+
+<script src="components/menu.js" asp-append-version="true"></script>

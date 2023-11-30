@@ -4,6 +4,7 @@ using WebClient.Models;
 
 namespace WebClient.Controllers;
 
+[Route("/")]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -13,11 +14,32 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    [Route("")]
     public IActionResult Index()
     {
         return View();
     }
 
+    [Route("login")]
+    public IActionResult Login()
+    {
+        return View();
+    }
+
+    [Route("register")]
+    public IActionResult Register()
+    {
+        return View();
+    }
+
+    [Route("logout")]
+    public IActionResult Logout()
+    {
+        return View();
+    }
+
+
+    [Route("error")]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
