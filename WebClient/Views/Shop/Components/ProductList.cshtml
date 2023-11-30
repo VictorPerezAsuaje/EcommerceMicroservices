@@ -1,7 +1,27 @@
 ﻿@using WebClient.Controllers
-@model List<ProductDTO>
+@using WebClient.Services
+@using WebClient.Services.Catalog.Products
+@model ResponseDTO<List<ProductGetDTO>>
 
-@foreach (var product in Model)
+@if (Model.IsFailure)
+{
+    <p class="text-rose-600">
+        @Model.Error
+    </p>
+
+    return;
+}
+
+@* @if(Model.Value.Count == 0)
+{
+    <form asp-controller="Shop" asp-action="SeedProductData" method="post">
+        <button class="bg-zuccini-700 text-white font-medium p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 cursor-pointer" type="submit">
+            SEED ME DATA
+        </button>
+    </form>    
+} *@
+
+@foreach (var product in Model.Value)
 {
 <article class="flex flex-col justify-center text-center">
     <div class="relative overflow-hidden group h-[350px]">
@@ -19,12 +39,12 @@
             </div>
         </div>
 
-            <img src="https://source.unsplash.com/random/350x500/?@product.Type.Name,@product.Name,@product.Id" class="object-cover h-[350px] w-full mb-4" />
+            <img src="https://source.unsplash.com/random/350x500/?@product.Category.Name,@product.Name,@product.Id" class="object-cover h-[350px] w-full mb-4" />
     </div>
 
     <h4 class="text-md text-zuccini-900 mb-2 mt-4 hover:font-bold">
         <a asp-controller="Shop" asp-action="Product" asp-route-id="@product.Id">@product.Name</a>
     </h4>
         <p>@product.Price.ToString("c")</p>
-</article>
+</article> 
 }

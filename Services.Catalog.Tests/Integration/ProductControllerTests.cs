@@ -144,7 +144,7 @@ public class ProductControllerTests : IClassFixture<CustomWebApplicationFactory>
         using (var scope = _factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
-            product = await context.Products.Where(x => x.Id == request.Id).FirstOrDefaultAsync();
+            product = await context.Products.Where(x => x.Id == request.Id).SingleOrDefaultAsync();
         }
 
         product.Should().NotBeNull();
@@ -178,7 +178,7 @@ public class ProductControllerTests : IClassFixture<CustomWebApplicationFactory>
         using (var scope = _factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
-            product = await context.Products.Where(x => x.Id == request.Id).FirstOrDefaultAsync();
+            product = await context.Products.Where(x => x.Id == request.Id).SingleOrDefaultAsync();
         }
 
         product.Should().NotBeNull();
@@ -222,7 +222,7 @@ public class ProductControllerTests : IClassFixture<CustomWebApplicationFactory>
         using (var scope = _factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
-            product = await context.Products.Where(x => x.Id == request.Id).FirstOrDefaultAsync();
+            product = await context.Products.Where(x => x.Id == request.Id).SingleOrDefaultAsync();
         }
 
         product.Should().BeNull();
@@ -238,7 +238,7 @@ public class ProductControllerTests : IClassFixture<CustomWebApplicationFactory>
         using (var scope = _factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
-            product = await context.Products.Where(x => x.Id == idToDelete).FirstOrDefaultAsync();
+            product = await context.Products.Where(x => x.Id == idToDelete).SingleOrDefaultAsync();
         }
 
         // Act
@@ -257,7 +257,7 @@ public class ProductControllerTests : IClassFixture<CustomWebApplicationFactory>
         using (var scope = _factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
-            product = await context.Products.Where(x => x.Id == idToDelete).FirstOrDefaultAsync();
+            product = await context.Products.Where(x => x.Id == idToDelete).SingleOrDefaultAsync();
         }
 
         product.Should().BeNull();

@@ -6,6 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Auth\" />
+  </ItemGroup>
+
 	<Target Name="Tailwind" AfterTargets="Build">
 		<Exec Command="npm run style:build" />
 	</Target>

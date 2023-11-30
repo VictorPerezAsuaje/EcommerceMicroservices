@@ -9,7 +9,7 @@ public interface ICategoryService
     Task<Result<CategoryGetDTO>> GetByNameAsync(string name);
     Task<Result<List<CategoryGetDTO>>> GetAllAsync();
     Task<Result> DeleteAsync(string name);
-    Task<Result> CreateAsync(Category category);
+    Task<Result> CreateAsync(CategoryPostDTO category);
 }
 
 public class CategoryService : ICategoryService
@@ -21,9 +21,15 @@ public class CategoryService : ICategoryService
         _context = context;
     }
 
-    public async Task<Result> CreateAsync(Category category)
+    public async Task<Result> CreateAsync(CategoryPostDTO category)
     {
-        await _context.Categories.AddAsync(category);
+        bool exists = await _context.Categories.AnyAsync(x => x.Name == category.Name);
+
+        if (exists)
+            return Result.Fail("The category already exists.");
+
+        await _context.Categories.AddAsync(new Category(category.Name));
+        await _context.SaveChangesAsync();
         return Result.Ok();
     }
 
@@ -35,6 +41,7 @@ public class CategoryService : ICategoryService
             return Result.Fail("The selected category to delete does not exist.");
 
         _context.Categories.Remove(category);
+        await _context.SaveChangesAsync();
         return Result.Ok();
     }
 

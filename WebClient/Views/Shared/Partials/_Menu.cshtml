@@ -1,6 +1,6 @@
 ﻿<nav class="bg-white border-gray-200 fixed top-0 w-full z-30 shadow-lg">
     <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen py-6 px-8">
-        <a asp-controller="Home" asp-action="Index" class="flex items-center space-x-3" (click)="closeMegaMenu()">
+        <a asp-controller="Home" asp-action="Index" class="flex items-center space-x-3">
             <img src="img/plants-logo.png" class="h-14" alt="Victor Pérez Asuaje Logo" />
         </a>
         <button type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
@@ -67,37 +67,37 @@
     <div id="plants" class="megamenu mt-1 bg-white border-gray-200 border-y" hidden>
         <ul class="grid max-w-screen-xl px-4 py-5 mx-auto text-gray-900 sm:grid-cols-2 md:grid-cols-3 md:px-6">
             <li>
-                <a asp-controller="Shop" asp-action="Index" asp-route-type="plants" asp-route-category="Perennials" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                <a asp-controller="Shop" asp-action="Index" asp-route-category="plants" asp-route-tag="Perennials" class="block p-3 rounded-lg hover:bg-gray-50">
                     <div class="font-semibold">Perennials</div>
                     <span class="text-sm text-gray-500 ">Explore our collection of perennial plants that come back year after year, adding beauty to your garden effortlessly.</span>
                 </a>
             </li>
             <li>
-                <a asp-controller="Shop" asp-action="Index" asp-route-type="plants" asp-route-category="Roses" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                <a asp-controller="Shop" asp-action="Index" asp-route-category="plants" asp-route-tag="Roses" class="block p-3 rounded-lg hover:bg-gray-50">
                     <div class="font-semibold">Roses</div>
                     <span class="text-sm text-gray-500 ">Discover the elegance and fragrance of our rose varieties, perfect for gardens, bouquets, and special occasions.</span>
                 </a>
             </li>
             <li>
-                <a asp-controller="Shop" asp-action="Index" asp-route-type="plants" asp-route-category="Climbers" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                <a asp-controller="Shop" asp-action="Index" asp-route-category="plants" asp-route-tag="Climbers" class="block p-3 rounded-lg hover:bg-gray-50">
                     <div class="font-semibold">Climbers</div>
                     <span class="text-sm text-gray-500 ">Find climbing plants that bring vertical interest to your garden, creating stunning natural backdrops.</span>
                 </a>
             </li>
             <li>
-                <a asp-controller="Shop" asp-action="Index" asp-route-type="plants" asp-route-category="Indoor" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                <a asp-controller="Shop" asp-action="Index" asp-route-category="plants" asp-route-tag="Indoor" class="block p-3 rounded-lg hover:bg-gray-50">
                     <div class="font-semibold">Indoor</div>
                     <span class="text-sm text-gray-500 ">Enhance your indoor spaces with our selection of houseplants, bringing greenery and freshness to your home.</span>
                 </a>
             </li>
             <li>
-                <a asp-controller="Shop" asp-action="Index" asp-route-type="plants" asp-route-category="Outdoor" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                <a asp-controller="Shop" asp-action="Index" asp-route-category="plants" asp-route-tag="Outdoor" class="block p-3 rounded-lg hover:bg-gray-50">
                     <div class="font-semibold">Outdoor</div>
                     <span class="text-sm text-gray-500 ">Elevate your outdoor areas with our outdoor plant options, making your garden or patio more inviting and beautiful.</span>
                 </a>
             </li>
             <li>
-                <a asp-controller="Shop" asp-action="Index" asp-route-type="plants" asp-route-category="Bedding" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                <a asp-controller="Shop" asp-action="Index" asp-route-category="plants" asp-route-tag="Bedding" class="block p-3 rounded-lg hover:bg-gray-50">
                     <div class="font-semibold">Bedding</div>
                     <span class="text-sm text-gray-500 ">Create cozy and colorful garden beds with our bedding plants, transforming your outdoor space.</span>
                 </a>
@@ -108,37 +108,37 @@
     <div id="bulbs" class="megamenu mt-1 bg-white border-gray-200 border-y" hidden>
         <ul class="grid max-w-screen-xl px-4 py-5 mx-auto text-gray-900 sm:grid-cols-2 md:grid-cols-3 md:px-6">
             <li>
-                <a asp-controller="Shop" asp-action="Index" asp-route-type="bulbs" asp-route-category="Tulips" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                <a asp-controller="Shop" asp-action="Index" asp-route-category="bulbs" asp-route-tag="Tulips" class="block p-3 rounded-lg hover:bg-gray-50">
                     <div class="font-semibold">Tulips</div>
                     <span class="text-sm text-gray-500 ">Brighten your garden with vibrant tulip varieties, adding a burst of color and charm in the spring.</span>
                 </a>
             </li>
             <li>
-                <a asp-controller="Shop" asp-action="Index" asp-route-type="bulbs" asp-route-category="Daffodils" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                <a asp-controller="Shop" asp-action="Index" asp-route-category="bulbs" asp-route-tag="Daffodils" class="block p-3 rounded-lg hover:bg-gray-50">
                     <div class="font-semibold">Daffodils</div>
                     <span class="text-sm text-gray-500 ">Welcome spring with the cheerful blooms of daffodils, a classic and beloved flower for your garden.</span>
                 </a>
             </li>
             <li>
-                <a asp-controller="Shop" asp-action="Index" asp-route-type="bulbs" asp-route-category="Alliums" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                <a asp-controller="Shop" asp-action="Index" asp-route-category="bulbs" asp-route-tag="Alliums" class="block p-3 rounded-lg hover:bg-gray-50">
                     <div class="font-semibold">Alliums</div>
                     <span class="text-sm text-gray-500 ">Add a touch of elegance to your garden with alliums, known for their unique spherical flower heads.</span>
                 </a>
             </li>
             <li>
-                <a asp-controller="Shop" asp-action="Index" asp-route-type="bulbs" asp-route-category="Iris" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                <a asp-controller="Shop" asp-action="Index" asp-route-category="bulbs" asp-route-tag="Iris" class="block p-3 rounded-lg hover:bg-gray-50">
                     <div class="font-semibold">Iris</div>
                     <span class="text-sm text-gray-500 ">Explore the beauty of iris flowers, available in a wide range of colors, to enhance your garden's appeal.</span>
                 </a>
             </li>
             <li>
-                <a asp-controller="Shop" asp-action="Index" asp-route-type="bulbs" asp-route-category="Amaryllis" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                <a asp-controller="Shop" asp-action="Index" asp-route-category="bulbs" asp-route-tag="Amaryllis" class="block p-3 rounded-lg hover:bg-gray-50">
                     <div class="font-semibold">Amaryllis</div>
                     <span class="text-sm text-gray-500 ">Cultivate stunning amaryllis bulbs, known for their large, striking blooms, as a centerpiece in your garden.</span>
                 </a>
             </li>
             <li>
-                <a asp-controller="Shop" asp-action="Index" asp-route-type="bulbs" asp-route-category="Muscari" class="block p-3 rounded-lg hover:bg-gray-50" (click)="closeMegaMenu()">
+                <a asp-controller="Shop" asp-action="Index" asp-route-category="bulbs" asp-route-tag="Muscari" class="block p-3 rounded-lg hover:bg-gray-50">
                     <div class="font-semibold">Muscari</div>
                     <span class="text-sm text-gray-500 ">Create a charming atmosphere with muscari flowers, also called grape hyacinths, for a unique garden touch.</span>
                 </a>

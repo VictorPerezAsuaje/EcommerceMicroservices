@@ -433,12 +433,12 @@ $.validator.addMethod( "cpfBR", function( value, element ) {
 	}
 
 	var sum = 0,
-		firstCN, secondCN, checkResult, i;
+		firstCN, secondCN, checkResponseDTO, i;
 
 	firstCN = parseInt( value.substring( 9, 10 ), 10 );
 	secondCN = parseInt( value.substring( 10, 11 ), 10 );
 
-	checkResult = function( sum, cn ) {
+	checkResponseDTO = function( sum, cn ) {
 		var result = ( sum * 10 ) % 11;
 		if ( ( result === 10 ) || ( result === 11 ) ) {
 			result = 0;
@@ -468,12 +468,12 @@ $.validator.addMethod( "cpfBR", function( value, element ) {
 	}
 
 	// If first Check Number (CN) is valid, move to Step 2 - using second Check Number:
-	if ( checkResult( sum, firstCN ) ) {
+	if ( checkResponseDTO( sum, firstCN ) ) {
 		sum = 0;
 		for ( i = 1; i <= 10; i++ ) {
 			sum = sum + parseInt( value.substring( i - 1, i ), 10 ) * ( 12 - i );
 		}
-		return checkResult( sum, secondCN );
+		return checkResponseDTO( sum, secondCN );
 	}
 	return false;
 

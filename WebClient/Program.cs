@@ -1,10 +1,23 @@
+using WebClient;
+using WebClient.Services;
+using WebClient.Services.Catalog.Categories;
+using WebClient.Services.Catalog.Products;
+using WebClient.Services.Catalog.Tags;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.Configure<APIServices>(builder.Configuration.GetSection("Services"));
 
+builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
+
+builder.Services.AddScoped<IBaseService, BaseService>();
+
+// CatalogService
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 var app = builder.Build();
 

@@ -9,7 +9,7 @@ public interface ITagService
     Task<Result<TagGetDTO>> GetByNameAsync(string name);
     Task<Result<List<TagGetDTO>>> GetAllAsync();
     Task<Result> DeleteAsync(string name);
-    Task<Result> CreateAsync(Tag tag);
+    Task<Result> CreateAsync(TagPostDTO tag);
 }
 
 public class TagService : ITagService
@@ -20,9 +20,15 @@ public class TagService : ITagService
     {
         _context = context;
     }
-    public async Task<Result> CreateAsync(Tag tag)
+    public async Task<Result> CreateAsync(TagPostDTO tag)
     {
-        await _context.Tags.AddAsync(tag);
+        bool exists = await _context.Tags.AnyAsync(x => x.Name == tag.Name);
+
+        if (exists)
+            return Result.Fail("The category already exists.");
+
+        await _context.Tags.AddAsync(new Tag(tag.Name));
+        await _context.SaveChangesAsync();
         return Result.Ok();
     }
 
@@ -34,6 +40,7 @@ public class TagService : ITagService
             return Result.Fail("The selected tag to delete does not exist.");
 
         _context.Tags.Remove(tag);
+        await _context.SaveChangesAsync();
         return Result.Ok();
     }
 
