@@ -79,7 +79,7 @@ public class CategoryController : ControllerBase
             ResponseDTO result = (await _categoryService.DeleteAsync(name)).ToResponseDTO();
 
             if (result.IsFailure)
-                return BadRequest(result);
+                return NotFound(result);
 
             return Ok(result);
         }

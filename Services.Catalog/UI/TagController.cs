@@ -78,7 +78,7 @@ public class TagController : ControllerBase
             ResponseDTO result = (await _tagService.DeleteAsync(name)).ToResponseDTO();
 
             if (result.IsFailure)
-                return BadRequest(result);
+                return NotFound(result);
 
             return Ok(result);
         }

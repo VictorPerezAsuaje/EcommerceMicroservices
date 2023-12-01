@@ -183,4 +183,73 @@ public class TagControllerTests : IClassFixture<CustomWebApplicationFactory>
 
         tag.Should().BeNull();
     }
+
+    [Fact]
+    public async Task Delete_ExistingName_ReturnsOkAndDeletesTag()
+    {
+        // Arrage
+        string name = DbInitializer.Tags[0].Name;
+
+        Tag? tag = null;
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+            tag = await context.Tags.Where(x => x.Name == name).SingleOrDefaultAsync();
+        }
+
+        // Act
+        var result = await _client.DeleteAsync("/tags/" + name);
+
+        // Assert
+
+        tag.Should().NotBeNull();
+        result.EnsureSuccessStatusCode();
+
+        var tokenResult = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        tokenResult.Should().NotBeNull();
+        tokenResult.IsSuccess.Should().Be(true);
+        tokenResult.Error.Should().BeNullOrWhiteSpace();
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+            tag = await context.Tags.Where(x => x.Name == name).SingleOrDefaultAsync();
+        }
+
+        tag.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task Delete_UnexistingName_ReturnsNotFound()
+    {
+        // Arrage
+        string name = "ThisTagsDoesNotExist";
+
+        Tag? tag = null;
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+            tag = await context.Tags.Where(x => x.Name == name).SingleOrDefaultAsync();
+        }
+
+        // Act
+        var result = await _client.DeleteAsync("/tags/" + name);
+
+        // Assert
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        tag.Should().BeNull();
+
+        var tokenResult = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        tokenResult.Should().NotBeNull();
+        tokenResult.IsSuccess.Should().Be(false);
+        tokenResult.Error.Should().NotBeNullOrWhiteSpace();
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+            tag = await context.Tags.Where(x => x.Name == name).SingleOrDefaultAsync();
+        }
+
+        tag.Should().BeNull();
+    }
 }

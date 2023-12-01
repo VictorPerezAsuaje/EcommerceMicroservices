@@ -182,4 +182,72 @@ public class CategoryControllerTests : IClassFixture<CustomWebApplicationFactory
         category.Should().BeNull();
     }
 
+    [Fact]
+    public async Task Delete_ExistingName_ReturnsOkAndDeletesCategory()
+    {
+        // Arrage
+        string name = DbInitializer.Categories[0].Name;
+
+        Category? category = null;
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+            category = await context.Categories.Where(x => x.Name == name).SingleOrDefaultAsync();
+        }
+
+        // Act
+        var result = await _client.DeleteAsync("/categories/" + name);
+
+        // Assert
+
+        category.Should().NotBeNull();
+        result.EnsureSuccessStatusCode();
+
+        var tokenResult = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        tokenResult.Should().NotBeNull();
+        tokenResult.IsSuccess.Should().Be(true);
+        tokenResult.Error.Should().BeNullOrWhiteSpace();
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+            category = await context.Categories.Where(x => x.Name == name).SingleOrDefaultAsync();
+        }
+
+        category.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task Delete_UnexistingName_ReturnsNotFound()
+    {
+        // Arrage
+        string name = "ThisCategoriesDoesNotExist";
+
+        Category? category = null;
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+            category = await context.Categories.Where(x => x.Name == name).SingleOrDefaultAsync();
+        }
+
+        // Act
+        var result = await _client.DeleteAsync("/categories/" + name);
+
+        // Assert
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        category.Should().BeNull();
+
+        var tokenResult = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        tokenResult.Should().NotBeNull();
+        tokenResult.IsSuccess.Should().Be(false);
+        tokenResult.Error.Should().NotBeNullOrWhiteSpace();
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+            category = await context.Categories.Where(x => x.Name == name).SingleOrDefaultAsync();
+        }
+
+        category.Should().BeNull();
+    }
 }

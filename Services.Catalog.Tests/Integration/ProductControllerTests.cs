@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Azure.Core;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -263,4 +264,37 @@ public class ProductControllerTests : IClassFixture<CustomWebApplicationFactory>
         product.Should().BeNull();
     }
 
+    [Fact]
+    public async Task Delete_UnexistingId_ReturnsNotFound()
+    {
+        // Arrage
+        Guid idToDelete = Guid.NewGuid();
+
+        Product? product = null;
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+            product = await context.Products.Where(x => x.Id == idToDelete).SingleOrDefaultAsync();
+        }
+
+        // Act
+        var result = await _client.DeleteAsync("/products/" + idToDelete);
+
+        // Assert
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        product.Should().BeNull();
+
+        var tokenResult = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        tokenResult.Should().NotBeNull();
+        tokenResult.IsSuccess.Should().Be(false);
+        tokenResult.Error.Should().NotBeNullOrWhiteSpace();
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+            product = await context.Products.Where(x => x.Id == idToDelete).SingleOrDefaultAsync();
+        }
+
+        product.Should().BeNull();
+    }
 }

@@ -78,7 +78,7 @@ public class ProductController : ControllerBase
             ResponseDTO result = (await _productService.DeleteAsync(id)).ToResponseDTO();
 
             if (result.IsFailure)
-                return BadRequest(result);
+                return NotFound(result);
 
             return Ok(result);
         }
