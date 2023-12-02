@@ -6,6 +6,8 @@ namespace WebClient.Services.Catalog.Products;
 
 public class ProductGetDTO
 {
+    /* CatalogService */
+
     public Guid Id { get; set; }
     public string Name { get; set; }
     public double Price { get; set; }
@@ -15,4 +17,10 @@ public class ProductGetDTO
     public List<TagGetDTO> Tags { get; set; } = new();
     public string? Description { get; set; } = null;
     public string? Details { get; set; } = null;
+
+    /* InventoryService */
+
+    public int AvailableInStock { get; set; } = 0;
+    public bool InStock => AvailableInStock > 0;
+
 }

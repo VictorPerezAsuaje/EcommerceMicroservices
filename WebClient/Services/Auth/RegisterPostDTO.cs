@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Services.Auth.Application;
+namespace WebClient.Services.Auth;
 
-public class RegistrationRequestDTO
+public class RegisterPostDTO
 {
     [Required]
     [DataType(DataType.EmailAddress)]

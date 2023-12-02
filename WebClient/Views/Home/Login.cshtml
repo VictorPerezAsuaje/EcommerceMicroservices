@@ -1,4 +1,7 @@
-﻿<div class="p-8 flex flex-col gap-8">
+﻿@using WebClient.Services.Auth
+@model LoginPostDTO
+
+<div class="p-8 flex flex-col gap-8">
     <h2 class="text-center text-2xl text-zuccini-900 font-extrabold">My Account</h2>
 
     <div class="flex flex-col lg:flex-row gap-8 min-h-[50vh] p-16">
@@ -9,14 +12,13 @@
                     If you have an account with us, please log in.
                 </p>
 
-                <p class="text-rose-600">
-                    @* {{ validationMessage }} *@
-                </p>
+                <div class="text-rose-600" asp-validation-summary="All">                  
+                </div>
             </header>
 
-            <form id="loginForm" form="loginForm">
-                <input class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Email" type="email" />
-                <input class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Password" type="password" />
+            <form id="loginForm" asp-controller="Home" asp-action="Login" method="post">
+                <input class="w-full border border-gray-nurse-100 p-2 mb-4" name="Email" placeholder="Email" type="email" />
+                <input class="w-full border border-gray-nurse-100 p-2 mb-4" name="Password" placeholder="Password" type="password" />
             </form>
 
             <footer class=" flex flex-row justify-between gap-8 items-center mt-4">

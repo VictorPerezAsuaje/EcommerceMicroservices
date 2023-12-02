@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using WebClient;
 using WebClient.Services;
+using WebClient.Services.Auth;
 using WebClient.Services.Catalog.Categories;
 using WebClient.Services.Catalog.Products;
 using WebClient.Services.Catalog.Tags;
@@ -12,7 +14,19 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 
+
 builder.Services.AddScoped<IBaseService, BaseService>();
+builder.Services.AddScoped<ITokenProvider, TokenProvider>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(opts =>
+    {
+        opts.ExpireTimeSpan = TimeSpan.FromDays(1);
+        opts.LoginPath = "/login";
+    });
+
+// AuthService
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // CatalogService
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -32,6 +46,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

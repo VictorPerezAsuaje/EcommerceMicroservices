@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebClient.Services;
+using WebClient.Services.Auth;
+using WebClient.Services.Cart;
 using WebClient.Services.Catalog.Categories;
 using WebClient.Services.Catalog.Products;
 using WebClient.Services.Catalog.Reviews;
@@ -60,6 +62,48 @@ public class ShopController : Controller
             new ResponseDTO<List<ProductGetDTO>>(true, products));
     }
 
+
+    [Route("cart")]
+    public async Task<IActionResult> Cart()
+    {
+        await Task.Delay(1000);
+        CartGetDTO cart = new CartGetDTO();
+
+        cart.Items = new()
+        {
+            new CartItemGetDTO()
+            {
+                ProductId = ProductData.Products[0].Id,
+                Name = ProductData.Products[0].Name,
+                Price = ProductData.Products[0].Price,
+                Amount = 2
+            },
+            new CartItemGetDTO()
+            {
+                ProductId = ProductData.Products[1].Id,
+                Name = ProductData.Products[1].Name,
+                Price = ProductData.Products[1].Price,
+                Amount = 5
+            },
+            new CartItemGetDTO()
+            {
+                ProductId = ProductData.Products[2].Id,
+                Name = ProductData.Products[2].Name,
+                Price = ProductData.Products[2].Price,
+                Amount = 1
+            },
+            new CartItemGetDTO()
+            {
+                ProductId = ProductData.Products[3].Id,
+                Name = ProductData.Products[3].Name,
+                Price = ProductData.Products[3].Price,
+                Amount = 1
+            }
+        };
+
+        return PartialView("Partials/_Cart", cart);
+    }
+
     #endregion Components
 
     [HttpPost("SeedProductData")]
@@ -114,6 +158,34 @@ public class ShopController : Controller
         filter.AvailableTags = tagResult.Value;       
         return View(filter);
     }
+
+
+    [Route("{id}")]
+    public async Task<IActionResult> Product(string id)
+    {
+        bool isValidGuid = Guid.TryParse(id, out Guid guid);
+
+        if (!isValidGuid)
+            return RedirectToAction("Index");
+
+        ResponseDTO<ProductGetDTO> result = await _productService.GetByIdAsync(guid);
+
+        if (result.IsFailure)
+            return RedirectToAction("Index");
+
+        return View(result.Value);
+    }
+
+    
+
+    [HttpPost("AddToCart")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddToCart(string id, string name, double price, int numberOfItems)
+    {
+        return PartialView("Cart");
+    }
+
+     
 }
 
 public static class ProductData

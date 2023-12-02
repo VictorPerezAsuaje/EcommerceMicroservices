@@ -1,0 +1,173 @@
+﻿@using WebClient.Services.Catalog.Products
+@model ProductGetDTO
+
+<div class="p-8 flex flex-col gap-8">
+    <nav class="text-sm text-gray-800">
+        <a asp-controller="Shop" asp-action="Index" title="Back to the shop">Shop</a>
+        <span aria-hidden="true" class="text-gray-600"> >> </span>
+        <span class="font-bold">@Model.Name</span>
+    </nav>
+
+    <article class="flex flex-col lg:flex-row gap-8">
+        <img src="https://source.unsplash.com/random?{{Model.type.Name}},@Model.Category?.Name, @Model.Id" class="object-cover h-[50vh] flex-[6] mb-4" />
+
+        <section class="flex-[4]">
+            <header class="text-gray-600">
+                <h2 class="text-2xl mt-4 text-gray-800 flex items-center gap-4">
+                    @Model.Name
+
+                    <button class="border-2 text-rose-800 bg-white border-rose-800 hover:bg-rose-800 hover:text-white rounded-full text-xs aspect-square w-8 transition-all duration-200 ease-in-out">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                </h2>
+
+                <div class="flex flex-row gap-1 mt-4 w-fit">
+                    <span class="mr-2">@Model.Rating</span>
+
+                    <div class="flex flex-row overflow-x-hidden" style="width: @(Model.Rating * 18)px">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+
+                    @if (Model.InStock)
+                    {
+                        <span class="ml-4 text-zuccini-600">In Stock</span>
+                    }
+                    else {
+                        <span class="ml-4 text-rose-600">No Stock</span>
+                    }
+                </div>
+
+                <p class="my-8">@Model.Description</p>
+
+                <p class="text-4xl mt-4 flex flex-row items-center gap-4 ">
+                    @Model.Price.ToString("c")
+                </p>
+
+                <div class="flex flex-row gap-4 items-center mt-8">
+                    <div class="flex flex-row gap-4 border-2 border-gray-nurse-200 p-4">
+                        <button class="" onclick="removeOneFromInputNumber('numberOfItemsToAdd')">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+
+                        <input id="numberOfItemsToAdd" class="px-2 outline-none cursor-default" type="number" min="0" step="1" value="0" readonly max="@Model.AvailableInStock" />
+
+                        <button class="" onclick="addOneToInputNumber('numberOfItemsToAdd')">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+
+                    <button class="w-full border-2 text-zuccini-800 bg-white border-zuccini-800 hover:bg-zuccini-800 hover:text-white text-md transition-all duration-200 ease-in-out p-4 select-none" onclick="addToCart()">
+                        <i class="fa-solid fa-shopping-cart mr-4"></i> Add To Cart
+                    </button>
+                </div>
+            </header>
+        </section>
+    </article>
+
+    <div class="pt-4">
+        <div class="flex flex-row gap-4 -mb-[1px]">
+            <button class="border border-gray-nurse-200 py-2 px-4 text-sm border-b-white" onclick="setActiveTab()" data-tab-group="product" data-tab="#productDetails">PRODUCT DETAILS</button>
+
+            <button class="border border-gray-nurse-200 py-2 px-4 text-sm" onclick="setActiveTab()" data-tab-group="product" data-tab="#reviews">REVIEWS</button>
+
+            <button class="border border-gray-nurse-200 py-2 px-4 text-sm" onclick="setActiveTab()" data-tab-group="product" data-tab="#shipping">SHIPPING & RETURNS</button>
+        </div>
+
+        <div class="border border-gray-nurse-200 min-h-[25vh] p-8">
+            <div id="productDetails">
+                @Model.Details
+            </div>
+
+            <div id="reviews" hidden>
+                @if (Model.Reviews.Count == 0)
+                {
+                    <p>No reviews available</p>
+                }
+                else {
+                    @foreach (var review in Model.Reviews)
+                    {
+                        <div class="mb-4">
+                            <h4 class="text-md font-bold">@review.Title</h4>
+                            <h5 class="text-sm font-light text-gray-nurse-300 flex flex-row gap-1 w-fit">
+                                @review.Username - @review.Rating
+
+                                <div class="flex flex-row overflow-x-hidden" style="width: @(Model.Rating * 16)px">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+
+                            </h5>
+                            <p class="py-4">@review.Body</p>
+                        </div>
+                    }
+                }
+
+                <hr class="border border-gray-nurse-200 my-4" />
+
+                <form>
+                    <h3 class="text-lg">Write a review</h3>
+
+                    <div class="mt-4">
+                        <label class="block mb-2 text-sm font-medium text-gray-900">
+                            Name
+                        </label>
+                        <input class="border border-l-gray-nurse-200 w-full p-2">
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block mb-2 text-sm font-medium text-gray-900">
+                            Email
+                        </label>
+                        <input class="border border-l-gray-nurse-200 w-full p-2">
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block mb-2 text-sm font-medium text-gray-900">
+                            Rating
+                        </label>
+
+                        <div class=" flex flex-row items-center gap-4 w-fit">
+                            <input type="number" min="0" max="5" step="0.1" value="0" class="border border-l-gray-nurse-200 w-14 p-2" oninput="setReviewRating(starSize = 18)">
+                            <div id="reviewRating" class="flex flex-row overflow-x-hidden" style="width: 0px">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block mb-2 text-sm font-medium text-gray-900">
+                            Review Title
+                        </label>
+                        <input class="border border-l-gray-nurse-200 w-full p-2">
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block mb-2 text-sm font-medium text-gray-900">
+                            Body
+                        </label>
+                        <textarea class="border border-l-gray-nurse-200 w-full h-full p-2"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div id="shipping" hidden>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="/pages/product.js" asp-append-version="true"></script>
+}

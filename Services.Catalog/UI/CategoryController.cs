@@ -3,6 +3,7 @@ using Services.Catalog.Application;
 using Services.Catalog.Application.Categories;
 using Services.Catalog.Application.Products;
 using Services.Catalog.UI.Extensions;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.Catalog.UI;
 
@@ -72,8 +73,11 @@ public class CategoryController : ControllerBase
     }
 
     [HttpDelete("{name}")]
-    public async Task<IActionResult> Delete(string name)
+    public async Task<IActionResult> Delete([Required] string name)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(new ResponseDTO(false, ModelState.GetErrorsAsString()));
+
         try
         {
             ResponseDTO result = (await _categoryService.DeleteAsync(name)).ToResponseDTO();

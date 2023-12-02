@@ -29,7 +29,7 @@ public class AuthService : IAuthService
 
     public async Task<Result<string>> Login(LoginRequestDTO request)
     {
-        AppUser? user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == request.Username);
+        AppUser? user = await _context.Users.FirstOrDefaultAsync(x => x.Email == request.Email);
 
         if (user is null)
             return Result.Fail<string>("Invalid credentials");
@@ -41,6 +41,8 @@ public class AuthService : IAuthService
 
         var roles = await _userManager.GetRolesAsync(user);
         var token = _jwtTokenGenerator.GenerateToken(user, roles);
+
+        // Raise UserLogged event for confirmation email purposes and notification
 
         return Result.Ok(token);
     }
@@ -59,7 +61,8 @@ public class AuthService : IAuthService
             NormalizedEmail = request.Email.ToUpper(),
             FirstName = request.FirstName,
             LastName = request.LastName,
-            PhoneNumber = request.PhoneNumber
+            PhoneNumber = request.PhoneNumber,
+            EmailConfirmed = true // Temporary
         };
 
         var validationResults = new List<ValidationResult>();
@@ -72,6 +75,8 @@ public class AuthService : IAuthService
 
         if (!result.Succeeded)
             return Result.Fail(result.Errors.FirstOrDefault()?.Description ?? "User could not be created.");
+
+        // Raise UserCreated event for confirmation email purposes and notification
 
         return Result.Ok();
     }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
 using Services.Auth.Application;
 using Services.Auth.Domain;
 using Services.Auth.Infrastructure;
@@ -33,10 +34,14 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
     [Theory]
     [InlineData("client@client", "C1ientP@ssw0rd")]
     [InlineData("admin@admin", "Adm1nP@ssw0rd")]
-    public async Task Login_WithValidCredentials_ReturnsToken(string username, string password)
+    public async Task Login_WithValidCredentials_ReturnsToken(string email, string password)
     {
         // Arrage
-        LoginRequestDTO dto = new LoginRequestDTO(username, password);
+        LoginRequestDTO dto = new LoginRequestDTO()
+        {
+            Email = email,
+            Password = password
+        };
 
         // Act
         var result = await _client.PostAsJsonAsync("/auth/login", dto);
@@ -52,14 +57,16 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Theory]
-    [InlineData("client@client", "")]
     [InlineData("client@client", "IncorrectPassword")]
-    [InlineData("", "C1ientP@ssw0rd")]
     [InlineData("IncorrectUsername", "C1ientP@ssw0rd")]
-    public async Task Login_WithInvalidCredentials_ReturnsError(string username, string password)
+    public async Task Login_WithInvalidCredentials_ReturnsError(string email, string password)
     {
         // Arrage
-        LoginRequestDTO dto = new LoginRequestDTO(username, password);
+        LoginRequestDTO dto = new LoginRequestDTO()
+        {
+            Email = email,
+            Password = password
+        };
 
         // Act
         var result = await _client.PostAsJsonAsync("/auth/login", dto);
@@ -75,13 +82,47 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Theory]
+    [InlineData("client@client", "")]
+    [InlineData("client@client", null)]
+    [InlineData("", "C1ientP@ssw0rd")]
+    [InlineData(null, "C1ientP@ssw0rd")]
+    public async Task Login_WithEmptyRequiredFields_ReturnsBadRequestAndValidationErrors(string email, string password)
+    {
+        // Arrage
+        LoginRequestDTO dto = new LoginRequestDTO()
+        {
+            Email = email,
+            Password = password
+        };
+
+        // Act
+        var result = await _client.PostAsJsonAsync("/auth/login", dto);
+
+        // Assert
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var validationResult = await result.Content.ReadAsStringAsync();
+        var errorDetails = JObject.Parse(validationResult);
+        var errors = errorDetails["errors"];
+
+        errorDetails.Should().NotBeNull();
+        errors.HasValues.Should().BeTrue();
+    }
+
+    [Theory]
     [InlineData("client.full@client", "Client", "Two", "123 123 123", "Va1idP@ssw0rd")]
     [InlineData("client.nullphone@client", "Client", "Three", null, "Va1idP@ssw0rd")]
     [InlineData("client.emptyphone@client", "Client", "Four", "", "Va1idP@ssw0rd")]
     public async Task Register_WithValidCredentials_ReturnsOk(string email, string firstName, string lastName, string phone, string password)
     {
         // Arrage
-        RegistrationRequestDTO dto = new RegistrationRequestDTO(email, firstName, lastName, password, phone);
+        RegistrationRequestDTO dto = new RegistrationRequestDTO()
+        {
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            Password = password,
+            PhoneNumber = phone
+        };
 
         // Act
         var result = await _client.PostAsJsonAsync("/auth/register", dto);
@@ -100,7 +141,13 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
     public async Task Register_WithExistingEmail_ReturnsError(string email, string firstName, string lastName, string password)
     {
         // Arrage
-        RegistrationRequestDTO dto = new RegistrationRequestDTO(email, firstName, lastName, password);
+        RegistrationRequestDTO dto = new RegistrationRequestDTO() 
+        { 
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            Password = password
+        };
 
         // Act
         var result = await _client.PostAsJsonAsync("/auth/register", dto);
@@ -118,25 +165,35 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
     [InlineData("", "Client", "Two", "Va1idP@ssw0rd")]
     [InlineData("client2@client", "", "Two", "Va1idP@ssw0rd")]
     [InlineData("client2@client", "Client", "", "Va1idP@ssw0rd")]
-    public async Task Register_WithInvalidCredentials_ReturnsError(string email, string firstName, string lastName, string password)
+    [InlineData(null, "Client", "Two", "Va1idP@ssw0rd")]
+    [InlineData("client2@client", null, "Two", "Va1idP@ssw0rd")]
+    [InlineData("client2@client", "Client", null, "Va1idP@ssw0rd")]
+    public async Task Register_WithEmptyRequiredFields_ReturnsBadRequestAndValidationErrors(string email, string firstName, string lastName, string password)
     {
         // Arrage
-        RegistrationRequestDTO dto = new RegistrationRequestDTO(email, firstName, lastName, password);
+        RegistrationRequestDTO dto = new RegistrationRequestDTO()
+        {
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            Password = password
+        };
 
         // Act
         var result = await _client.PostAsJsonAsync("/auth/register", dto);
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var tokenResult = await result.Content.ReadFromJsonAsync<ResponseDTO>();
-        tokenResult.Should().NotBeNull();
-        tokenResult.IsSuccess.Should().Be(false);
-        tokenResult.Error.Should().NotBeNullOrEmpty();
-        tokenResult.Error.Should().Be("There were validation errors trying to create the user.");
+        var validationResult = await result.Content.ReadAsStringAsync();
+        var errorDetails = JObject.Parse(validationResult);
+        var errors = errorDetails["errors"];
+
+        errorDetails.Should().NotBeNull();
+        errors.HasValues.Should().BeTrue();
     }
 
+
     [Theory]
-    [InlineData("client2@client", "Client", "Two", "")]
     [InlineData("client2@client", "Client", "Two", "0nlylower$")]
     [InlineData("client2@client", "Client", "Two", "0NLYUPPER$")]
     [InlineData("client2@client", "Client", "Two", "NoNumberHere$")]
@@ -144,7 +201,13 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
     public async Task Register_WithInvalidPasswords_ReturnsError(string email, string firstName, string lastName, string password)
     {
         // Arrage
-        RegistrationRequestDTO dto = new RegistrationRequestDTO(email, firstName, lastName, password);
+        RegistrationRequestDTO dto = new RegistrationRequestDTO()
+        {
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            Password = password
+        };
 
         // Act
         var result = await _client.PostAsJsonAsync("/auth/register", dto);

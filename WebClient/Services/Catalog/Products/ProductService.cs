@@ -48,7 +48,11 @@ public class ProductService : IProductService
 
     public async Task<ResponseDTO<ProductGetDTO>> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _sender.SendAsync<ProductGetDTO>(new RequestDTO()
+        {
+            EndpointType = EndpointType.GET,
+            Url = _catalogOptions.BaseUrl + "/products/" + id.ToString()
+        });
     }
 
     public async Task<ResponseDTO> UpdateAsync(Guid productId, ProductPutDTO dto)

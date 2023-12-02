@@ -7,6 +7,11 @@ using System.Text;
 
 namespace Services.Auth.Application;
 
+public interface IJwtTokenGenerator
+{
+    string GenerateToken(AppUser user, IEnumerable<string> roles);
+}
+
 public class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly JwtOptions _options;

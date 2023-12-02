@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Services.Auth.Application;
 using Services.Auth.Domain;
+using Services.Catalog.UI.Extensions;
 
 namespace Services.Auth.Controllers;
 
@@ -19,6 +20,9 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO dto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(new ResponseDTO(false, ModelState.GetErrorsAsString()));
+
         try
         {
             ResponseDTO result = (await _authService.Register(dto)).ToResponseDTO();
@@ -38,6 +42,9 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDTO dto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(new ResponseDTO(false, ModelState.GetErrorsAsString()));
+
         try
         {
             var result = (await _authService.Login(dto)).ToResponseDTO();

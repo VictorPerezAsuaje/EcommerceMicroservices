@@ -1,0 +1,59 @@
+﻿@using WebClient.Services.Cart
+
+@model CartGetDTO
+
+<header class="flex flex-row justify-between items-center flex-1 max-h-[10vh]">
+    <h3 class="text-lg font-bold">Cart items</h3>
+
+    <button onclick="closeCartMenu()">
+        <i class="fa-solid fa-x"></i>
+    </button>
+</header>
+
+<div id="cartItems" class="max-h-[80vh] flex-[9] overflow-y-auto">
+    @foreach (var item in Model.Items)
+    {
+        <div class="flex flex-row justify-between gap-4 mb-4">
+            <div class="flex flex-row gap-4">
+                <button class="my-auto text-[0.5rem] text-rose-600 border-rose-600 border h-4 aspect-square rounded-full font-light" (click)="removeItem(item.id)">
+                    <i class="fa-solid fa-x"></i>
+                </button>
+
+                <img src="https://source.unsplash.com/random/50x50/?@item.Name,@item.ProductId" class="object-cover aspect-square w-[50px]">
+
+                <div>
+                    <h4>@item.Name</h4>
+                    <span class="text-gray-nurse-500 text-sm">
+                        @item.Price.ToString("c")
+                        <span class="mx-2">x</span>
+                        <input type="number" min="1" step="1" value="@item.Amount" (change)="updateAmount(item.id, $event)" readonly />
+                    </span>                    
+                </div>
+            </div>
+
+            <div class="flex flex-row flex-wrap gap-4 text-right items-center">
+                <span class="font-bold">@((item.Amount * item.Price).ToString("c"))</span>
+            </div>
+        </div>
+    }        
+</div>
+
+<footer class="flex-1 flex flex-row justify-between max-h-[10vh] border-t-2 border-gray-nurse-200 pt-8 items-center">
+    <span>Total: </span>
+    <span class="font-bold text-lg">
+        @if (Model.HasDiscounts)
+        {
+            <span class="line-through text-rose-600">@Model.Total.ToString("c")</span>
+
+            <span class="flex items-center bg-rose-600 text-white text-xs rounded-lg font-bold h-6 px-1">
+                @Model.Total.ToString("c")
+            </span>
+        }
+        else
+        {
+            <span>@Model.Total.ToString("c")</span>
+        }
+    </span>
+
+
+</footer>

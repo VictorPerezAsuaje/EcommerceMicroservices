@@ -5,13 +5,17 @@
         <div class="border border-gray-nurse-100 h-full flex-1 p-16">
             <header class="text-center mb-8">
                 <h3 class="text-xl text-zuccini-900 font-bold uppercase mb-4">Create an Account</h3>
-            </header>
 
-            <form>
-                <input class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="First Name" />
-                <input class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Last Name" />
-                <input class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Email" />
-                <input class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Password" />
+                <div class="text-rose-600" asp-validation-summary="All">
+                </div>
+            </header>            
+
+            <form id="registrationForm" asp-controller="Home" asp-action="Register">
+                <input class="w-full border border-gray-nurse-100 p-2 mb-4" name="FirstName" placeholder="First Name" />
+                <input class="w-full border border-gray-nurse-100 p-2 mb-4" name="LastName" placeholder="Last Name" />
+                <input class="w-full border border-gray-nurse-100 p-2 mb-4" name="Email" type="email" placeholder="Email" />
+                <input class="w-full border border-gray-nurse-100 p-2 mb-4" name="Password" type="password" placeholder="Password" />
+                <input class="w-full border border-gray-nurse-100 p-2 mb-4" name="PhoneNumber" placeholder="Phone number" />
             </form>
 
             <footer class="flex flex-row justify-between gap-8 items-center mt-4">
@@ -19,7 +23,7 @@
                     <input type="checkbox" class="accent-zuccini-600 mr-4" />
                     Subscribe to stay updated with new products and offers!
                 </label>
-                <button class="bg-zuccini-700 text-white font-bold text-sm p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 w-fit">REGISTER</button>
+                <button type="submit" form="registrationForm" class="bg-zuccini-700 text-white font-bold text-sm p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 w-fit">REGISTER</button>
             </footer>
         </div>
 
@@ -28,7 +32,7 @@
             <p class="text-sm text-gray-nurse-500 ">
                 Then you don't need to do anything here! Let's go back to the login page.
             </p>
-            <a routerLink="/login" class="bg-zuccini-700 text-white font-bold text-sm p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 w-fit">GO TO LOGIN</a>
+            <a asp-controller="Home" asp-action="Login" class="bg-zuccini-700 text-white font-bold text-sm p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 w-fit">GO TO LOGIN</a>
         </div>
     </div>
 </div>

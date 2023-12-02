@@ -2,6 +2,7 @@
 
 public class APIServices
 {
+    public const string AuthCookie = "AuthCookie";
     public ServiceOptions Auth { get; set; }
     public ServiceOptions Catalog { get; set; }
 }
