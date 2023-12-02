@@ -164,6 +164,16 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         tokenResult.Should().NotBeNull();
         tokenResult.IsSuccess.Should().Be(true);
         tokenResult.Error.Should().BeNullOrEmpty();
+
+        AppUser? user = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+            user = await context.Users.SingleOrDefaultAsync(x => x.Email == email);
+        }
+
+        user.Should().NotBeNull();
     }
 
     [Theory]
@@ -189,6 +199,16 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         tokenResult.IsSuccess.Should().Be(false);
         tokenResult.Error.Should().NotBeNullOrEmpty();
         tokenResult.Error.Should().Be("The email used to create the account already exists");
+
+        AppUser? user = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+            user = await context.Users.SingleOrDefaultAsync(x => x.Email == email);
+        }
+
+        user.Should().NotBeNull();
     }
 
     [Theory]
@@ -220,6 +240,16 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
 
         errorDetails.Should().NotBeNull();
         errors.HasValues.Should().BeTrue();
+
+        AppUser? user = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+            user = await context.Users.SingleOrDefaultAsync(x => x.Email == email);
+        }
+
+        user.Should().BeNull();
     }
 
 
@@ -248,5 +278,15 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         tokenResult.Should().NotBeNull();
         tokenResult.IsSuccess.Should().Be(false);
         tokenResult.Error.Should().NotBeNullOrEmpty();
+
+        AppUser? user = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+            user = await context.Users.SingleOrDefaultAsync(x => x.Email == email);
+        }
+
+        user.Should().BeNull();
     }
 }
