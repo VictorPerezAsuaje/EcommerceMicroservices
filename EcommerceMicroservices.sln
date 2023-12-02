@@ -21,17 +21,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Orders", "Orders", "{4FC2ED
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cart", "Cart", "{6B43D70E-49DA-42FF-A6DE-AFB4564BE342}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Auth", "Services.Auth\Services.Auth.csproj", "{A9F022F9-C9C3-4012-8B6C-4EBB621C47A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Auth", "Services\Auth\Services.Auth\Services.Auth.csproj", "{A9F022F9-C9C3-4012-8B6C-4EBB621C47A8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Auth.Tests", "Services.Auth.Tests\Services.Auth.Tests.csproj", "{8A8F90A2-C6F7-4705-AB2F-7581E6838AEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Auth.Tests", "Services\Auth\Services.Auth.Tests\Services.Auth.Tests.csproj", "{8A8F90A2-C6F7-4705-AB2F-7581E6838AEC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Catalog", "Services.Catalog\Services.Catalog.csproj", "{A73A1893-C2EC-4BB3-89E7-19564F32548A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Catalog", "Services\Catalog\Services.Catalog\Services.Catalog.csproj", "{A73A1893-C2EC-4BB3-89E7-19564F32548A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Catalog.Tests", "Services.Catalog.Tests\Services.Catalog.Tests.csproj", "{C7B54212-8F9A-49E4-AC22-99580B2563D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Catalog.Tests", "Services\Catalog\Services.Catalog.Tests\Services.Catalog.Tests.csproj", "{C7B54212-8F9A-49E4-AC22-99580B2563D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Cart", "Services.Cart\Services.Cart.csproj", "{E8BF718E-60C9-4C46-AB19-7FBDB4227858}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Cart", "Services\Cart\Services.Cart\Services.Cart.csproj", "{E8BF718E-60C9-4C46-AB19-7FBDB4227858}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Cart.Tests", "Services.Cart.Tests\Services.Cart.Tests.csproj", "{B313712B-BD8F-40CA-95F6-ED60EFE4BE6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Cart.Tests", "Services\Cart\Services.Cart.Tests\Services.Cart.Tests.csproj", "{B313712B-BD8F-40CA-95F6-ED60EFE4BE6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
