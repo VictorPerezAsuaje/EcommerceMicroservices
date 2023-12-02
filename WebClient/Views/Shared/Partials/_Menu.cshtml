@@ -53,6 +53,10 @@
                 <a asp-controller="Home" asp-action="Logout" class="text-zuccini-700 hover:text-zuccini-800 hover:bg-gray-50 focus:ring-zuccini-300 focus:ring-4 text-lg px-2.5 aspect-square rounded-full my-auto flex items-center justify-center rotate-180">
                     <i class="fa-solid fa-sign-in"></i>
                 </a>
+
+                <a asp-area="Administration" asp-controller="Dashboard" asp-action="Index" class="text-zuccini-700 hover:text-zuccini-800 hover:bg-gray-50 focus:ring-zuccini-300 focus:ring-4 text-lg px-2.5 aspect-square rounded-full my-auto flex items-center justify-center">
+                    <i class="fa-solid fa-lock"></i>
+                </a>
             }
 
             <button class="relative text-zuccini-700 hover:text-zuccini-800 hover:bg-gray-50 focus:ring-zuccini-300 focus:ring-4 text-lg px-2.5 aspect-square rounded-full my-auto flex items-center justify-center" 
@@ -61,7 +65,7 @@
                 hx-swap="innerHTML"
                     hx-target="#cart">
                 <span class="absolute top-0 right-0 bg-golden-600 text-white h-4 text-xs aspect-square rounded-full">
-                    @* {{ cartService.getCartItems().length }} *@ 0
+                    
                 </span>
                 <i class="fa-solid fa-cart-shopping"></i>
             </button>

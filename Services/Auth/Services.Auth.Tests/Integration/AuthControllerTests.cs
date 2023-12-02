@@ -1,16 +1,20 @@
-﻿using FluentAssertions;
+﻿using Azure.Core;
+using FluentAssertions;
 using FluentAssertions.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
 using Services.Auth.Application;
 using Services.Auth.Domain;
 using Services.Auth.Infrastructure;
 using Services.Auth.Tests.Utilities;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace Services.Auth.Tests.Integration;
@@ -23,6 +27,8 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
 
     public AuthControllerTests(CustomWebApplicationFactory factory)
     {
+        _factory = factory;
+
         _client = factory.CreateClient(new WebApplicationFactoryClientOptions()
             {
                 AllowAutoRedirect = false
@@ -43,6 +49,14 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
             Password = password
         };
 
+        AppUser? user = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+            user = await context.Users.SingleAsync(x => x.Email == email);
+        }
+
         // Act
         var result = await _client.PostAsJsonAsync("/auth/login", dto);
 
@@ -54,6 +68,22 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         tokenResult.IsSuccess.Should().Be(true);
         tokenResult.Error.Should().BeNullOrEmpty();
         tokenResult.Value.Should().NotBeNullOrWhiteSpace();
+
+        var handler = new JwtSecurityTokenHandler();
+        var jwt = handler.ReadJwtToken(tokenResult.Value);
+
+        jwt.Should().NotBeNull();
+        var emailClaim = jwt.Claims.SingleOrDefault(x => x.Type == JwtRegisteredClaimNames.Email);
+        emailClaim.Should().NotBeNull();
+        emailClaim.Value.Should().Be(user.Email);
+
+        var idClaim = jwt.Claims.SingleOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub);
+        idClaim.Should().NotBeNull();
+        idClaim.Value.Should().Be(user.Id);
+
+        var nameClaim = jwt.Claims.SingleOrDefault(x => x.Type == JwtRegisteredClaimNames.Name);
+        nameClaim.Should().NotBeNull();
+        nameClaim.Value.Should().Be(user.FullName);
     }
 
     [Theory]
