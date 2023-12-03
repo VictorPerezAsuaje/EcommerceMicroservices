@@ -26,7 +26,7 @@ public class CartService : ICartService
         return await _sender.SendAsync(new RequestDTO()
         {
             EndpointType = EndpointType.POST,
-            Url = _cartOptions.BaseUrl + "/cart/" + dto.ClientId,
+            Url = _cartOptions.BaseUrl + "/cart/" + clientId,
             Data = dto
         });
     }

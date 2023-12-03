@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using WebClient.Services;
 using WebClient.Services.Auth;
 using WebClient.Services.Cart;
@@ -24,7 +26,6 @@ public class ShopController : Controller
     IProductService _productService;
     ICategoryService _categoryService;
     ITagService _tagService;
-
     public ShopController(IProductService productService, ICategoryService categoryService, ITagService tagService)
     {
         _productService = productService;
@@ -32,13 +33,10 @@ public class ShopController : Controller
         _tagService = tagService;
     }
 
-    #region Components 
 
     [Route("product-list")]
     public async Task<IActionResult> ProductList(string? category = null, string? tags = null)
     {
-        //List<ProductGetDTO> products = new List<ProductGetDTO>(ProductData.Products);
-
         ResponseDTO<List<ProductGetDTO>> result = await _productService.GetAllAsync();
 
         if(result.IsFailure)
@@ -62,49 +60,6 @@ public class ShopController : Controller
             new ResponseDTO<List<ProductGetDTO>>(true, products));
     }
 
-
-    [Route("cart")]
-    public async Task<IActionResult> Cart()
-    {
-        await Task.Delay(1000);
-        CartGetDTO cart = new CartGetDTO();
-
-        cart.Items = new()
-        {
-            new CartItemGetDTO()
-            {
-                ProductId = ProductData.Products[0].Id,
-                Name = ProductData.Products[0].Name,
-                Price = ProductData.Products[0].Price,
-                Amount = 2
-            },
-            new CartItemGetDTO()
-            {
-                ProductId = ProductData.Products[1].Id,
-                Name = ProductData.Products[1].Name,
-                Price = ProductData.Products[1].Price,
-                Amount = 5
-            },
-            new CartItemGetDTO()
-            {
-                ProductId = ProductData.Products[2].Id,
-                Name = ProductData.Products[2].Name,
-                Price = ProductData.Products[2].Price,
-                Amount = 1
-            },
-            new CartItemGetDTO()
-            {
-                ProductId = ProductData.Products[3].Id,
-                Name = ProductData.Products[3].Name,
-                Price = ProductData.Products[3].Price,
-                Amount = 1
-            }
-        };
-
-        return PartialView("Partials/_Cart", cart);
-    }
-
-    #endregion Components
 
     [HttpPost("SeedProductData")]
     [ValidateAntiForgeryToken]
@@ -165,7 +120,7 @@ public class ShopController : Controller
     {
         bool isValidGuid = Guid.TryParse(id, out Guid guid);
 
-        if (!isValidGuid)
+        if (!isValidGuid || guid == default(Guid))
             return RedirectToAction("Index");
 
         ResponseDTO<ProductGetDTO> result = await _productService.GetByIdAsync(guid);
@@ -174,18 +129,9 @@ public class ShopController : Controller
             return RedirectToAction("Index");
 
         return View(result.Value);
-    }
+    }    
 
     
-
-    [HttpPost("AddToCart")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddToCart(string id, string name, double price, int numberOfItems)
-    {
-        return PartialView("Cart");
-    }
-
-     
 }
 
 public static class ProductData

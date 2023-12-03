@@ -9,7 +9,7 @@
     </nav>
 
     <article class="flex flex-col lg:flex-row gap-8">
-        <img src="https://source.unsplash.com/random?{{Model.type.Name}},@Model.Category?.Name, @Model.Id" class="object-cover h-[50vh] flex-[6] mb-4" />
+        <img src="https://source.unsplash.com/random?@Model.Category?.Name,@Model.Id" class="object-cover h-[50vh] flex-[6] mb-4" />
 
         <section class="flex-[4]">
             <header class="text-gray-600">
@@ -47,23 +47,34 @@
                     @Model.Price.ToString("c")
                 </p>
 
-                <div class="flex flex-row gap-4 items-center mt-8">
+                
+                <form id="addToCartForm" class="flex flex-row gap-4 items-center mt-8"
+                      hx-post="/cart"
+                    hx-swap="none"
+                >
+                    @Html.AntiForgeryToken()
+                    <input value="@Model.Id" name="ProductId" hidden />
+                    <input value="https://source.unsplash.com/random?@Model.Category?.Name,@Model.Id" name="ThumbnailUrl" hidden />
+                    <input value="@Model.Name" name="Name" hidden />
+                    <input value="@Model.Price" name="Price" hidden />
+
+
                     <div class="flex flex-row gap-4 border-2 border-gray-nurse-200 p-4">
-                        <button class="" onclick="removeOneFromInputNumber('numberOfItemsToAdd')">
+                        <button type="button" onclick="removeOneFromInputNumber('numberOfItemsToAdd')">
                             <i class="fa-solid fa-minus"></i>
                         </button>
 
-                        <input id="numberOfItemsToAdd" class="px-2 outline-none cursor-default" type="number" min="0" step="1" value="0" readonly max="@Model.AvailableInStock" />
+                        <input id="numberOfItemsToAdd" name="Amount" class="px-2 outline-none cursor-default" type="number" min="0" max="@Model.AvailableInStock" step="1" value="0" readonly />
 
-                        <button class="" onclick="addOneToInputNumber('numberOfItemsToAdd')">
+                        <button type="button" onclick="addOneToInputNumber('numberOfItemsToAdd')">
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
 
-                    <button class="w-full border-2 text-zuccini-800 bg-white border-zuccini-800 hover:bg-zuccini-800 hover:text-white text-md transition-all duration-200 ease-in-out p-4 select-none" onclick="addToCart()">
+                    <button type="submit" class="w-full border-2 text-zuccini-800 bg-white border-zuccini-800 hover:bg-zuccini-800 hover:text-white text-md transition-all duration-200 ease-in-out p-4 select-none">
                         <i class="fa-solid fa-shopping-cart mr-4"></i> Add To Cart
                     </button>
-                </div>
+                </form>
             </header>
         </section>
     </article>

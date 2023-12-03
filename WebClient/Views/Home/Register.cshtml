@@ -11,6 +11,7 @@
             </header>            
 
             <form id="registrationForm" asp-controller="Home" asp-action="Register">
+                @Html.AntiForgeryToken()
                 <input class="w-full border border-gray-nurse-100 p-2 mb-4" name="FirstName" placeholder="First Name" />
                 <input class="w-full border border-gray-nurse-100 p-2 mb-4" name="LastName" placeholder="Last Name" />
                 <input class="w-full border border-gray-nurse-100 p-2 mb-4" name="Email" type="email" placeholder="Email" />

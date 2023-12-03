@@ -14,7 +14,6 @@ public class CartController : Controller
         _cartService = cartService;
     }
 
-
     [HttpGet("{clientId}")]
     public async Task<IActionResult> GetCart(Guid clientId)
     {

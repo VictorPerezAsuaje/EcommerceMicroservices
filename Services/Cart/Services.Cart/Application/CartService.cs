@@ -24,17 +24,21 @@ public class CartService : ICartService
 
     public async Task<Result> AddCartItemAsync(Guid clientId, CartItemPostDTO dto)
     {
-        bool idAlreadyExists = await _context.CartItems
-                                        .AnyAsync(x => x.ClientId == clientId && x.ProductId == dto.ProductId);
+        CartItem? item = await _context.CartItems
+                                    .SingleOrDefaultAsync(x => x.ClientId == clientId && x.ProductId == dto.ProductId);
 
-        if (idAlreadyExists)
-            return Result.Fail<Guid>("That product already exists in your cart.");
-
-        CartItem item = dto.ToCartItem(clientId);
-
-        await _context.CartItems.AddAsync(item);
+        if (item is not null)
+        {
+            item.IncreaseAmount(dto.Amount);
+            _context.CartItems.Update(item);
+        }
+        else
+        {
+            item = dto.ToCartItem(clientId);
+            await _context.CartItems.AddAsync(item);
+        }
+         
         await _context.SaveChangesAsync();
-
         return Result.Ok();
     }
 
@@ -56,11 +60,13 @@ public class CartService : ICartService
     public async Task<Result> UpdateCartItemAsync(Guid clientId, Guid productId, CartItemPutDTO dto)
     {
         CartItem? item = await _context.CartItems
-                                        .Where(x => x.ClientId == clientId && x.ProductId == productId)
-                                        .FirstOrDefaultAsync();
+                                        .FirstOrDefaultAsync(x => x.ClientId == clientId && x.ProductId == productId);
 
         if (item is null)
             return Result.Fail("The selected product to update does not exist.");
+
+        if(dto.Amount is not null)
+            item.UpdateAmount(dto.Amount.Value);
 
         _context.CartItems.Update(item);
         await _context.SaveChangesAsync();
@@ -72,4 +78,5 @@ public class CartService : ICartService
                                             .Where(x => x.ClientId == clientId)
                                             .ToQueryableGetDTO()
                                             .ToListAsync());
+
 }

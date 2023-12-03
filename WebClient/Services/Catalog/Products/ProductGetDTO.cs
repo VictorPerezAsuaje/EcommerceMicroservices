@@ -20,7 +20,7 @@ public class ProductGetDTO
 
     /* InventoryService */
 
-    public int AvailableInStock { get; set; } = 0;
+    public int AvailableInStock { get; set; } = 5;
     public bool InStock => AvailableInStock > 0;
 
 }

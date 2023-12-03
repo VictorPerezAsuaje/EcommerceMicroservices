@@ -59,12 +59,9 @@
                 </a>
             }
 
-            <button class="relative text-zuccini-700 hover:text-zuccini-800 hover:bg-gray-50 focus:ring-zuccini-300 focus:ring-4 text-lg px-2.5 aspect-square rounded-full my-auto flex items-center justify-center" 
-                onclick="openCartMenu()"
-                hx-get="/shop/cart"
-                hx-swap="innerHTML"
-                    hx-target="#cart">
-                <span class="absolute top-0 right-0 bg-golden-600 text-white h-4 text-xs aspect-square rounded-full">
+            <button class="relative text-zuccini-700 hover:text-zuccini-800 hover:bg-gray-50 focus:ring-zuccini-300 focus:ring-4 text-lg px-2.5 aspect-square rounded-full my-auto flex items-center justify-center"
+                    onclick="openCartMenu()">
+                <span id="numberOfCartItemsAdded" class="absolute top-0 right-0 bg-golden-600 text-white h-4 text-xs aspect-square rounded-full">
                     
                 </span>
                 <i class="fa-solid fa-cart-shopping"></i>
@@ -167,7 +164,10 @@
     </div>
 
 
-    <aside id="cart" class="fixed h-screen w-3/4 md:w-1/2 lg:w-1/3 bg-white shadow-lg top-0 p-8 flex flex-col transition-all ease-in-out duration-200 -right-3/4 md:-right-1/2 lg:-right-1/3">
+    <aside id="cart" class="fixed h-screen w-3/4 md:w-1/2 lg:w-1/3 bg-white shadow-lg top-0 p-8 flex flex-col transition-all ease-in-out duration-200 -right-3/4 md:-right-1/2 lg:-right-1/3"
+           hx-get="/cart"
+           hx-swap="innerHTML"
+           hx-trigger="load delay:500ms, cart-item-added from:body">
         <header class="flex flex-row justify-between items-center flex-1 max-h-[10vh]">
             <h3 class="text-lg font-bold">Cart items</h3>
 

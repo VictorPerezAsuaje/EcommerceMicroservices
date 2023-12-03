@@ -10,23 +10,32 @@
     </button>
 </header>
 
+
 <div id="cartItems" class="max-h-[80vh] flex-[9] overflow-y-auto">
     @foreach (var item in Model.Items)
     {
         <div class="flex flex-row justify-between gap-4 mb-4">
             <div class="flex flex-row gap-4">
-                <button class="my-auto text-[0.5rem] text-rose-600 border-rose-600 border h-4 aspect-square rounded-full font-light" (click)="removeItem(item.id)">
-                    <i class="fa-solid fa-x"></i>
-                </button>
+                <form hx-delete="/cart/@item.ProductId" hx-swap="none">
+                    @Html.AntiForgeryToken()
+                    <input value="@item.ProductId" name="productId" hidden />
+                    <button type="submit" class="my-auto text-[0.5rem] text-rose-600 border-rose-600 border h-4 aspect-square rounded-full font-light">
+                        <i class="fa-solid fa-x"></i>
+                    </button>
+                </form>                
 
                 <img src="https://source.unsplash.com/random/50x50/?@item.Name,@item.ProductId" class="object-cover aspect-square w-[50px]">
 
                 <div>
                     <h4>@item.Name</h4>
-                    <span class="text-gray-nurse-500 text-sm">
+                    <span class="flex flex-row text-gray-nurse-500 text-sm">
                         @item.Price.ToString("c")
                         <span class="mx-2">x</span>
-                        <input type="number" min="1" step="1" value="@item.Amount" (change)="updateAmount(item.id, $event)" readonly />
+                        <form hx-put="/cart/@item.ProductId"
+                              hx-trigger="change delay:500ms from:#cartItem_amount_@item.ProductId">
+                            @Html.AntiForgeryToken()
+                            <input id="cartItem_amount_@item.ProductId" type="number" min="1" step="1" value="@item.Amount" name="amount" />
+                        </form>
                     </span>                    
                 </div>
             </div>
@@ -54,6 +63,13 @@
             <span>@Model.Total.ToString("c")</span>
         }
     </span>
-
-
 </footer>
+
+<script id="loadCartItemsAddedScript" type="text/javascript">
+    (
+        function () {
+            document.getElementById("numberOfCartItemsAdded").textContent = '@Model.Items.Count';
+            document.getElementById("loadCartItemsAddedScript").remove();
+        }
+    )()
+</script>

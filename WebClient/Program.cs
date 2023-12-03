@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using WebClient;
 using WebClient.Services;
 using WebClient.Services.Auth;
+using WebClient.Services.Cart;
 using WebClient.Services.Catalog.Categories;
 using WebClient.Services.Catalog.Products;
 using WebClient.Services.Catalog.Tags;
@@ -32,6 +33,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+// CartService
+builder.Services.AddScoped<ICartService, CartService>();
 
 var app = builder.Build();
 

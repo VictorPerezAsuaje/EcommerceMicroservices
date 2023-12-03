@@ -38,4 +38,18 @@ public class CartItem
 
         return this;
     }
+
+    public CartItem IncreaseAmount(int amountToAdd)
+    {
+        if (amountToAdd < 0) return this;
+
+        Amount += amountToAdd;
+        return this;
+    }
+
+    public CartItem UpdateAmount(int newAmount)
+    {
+        Amount = newAmount;
+        return this;
+    }
 }

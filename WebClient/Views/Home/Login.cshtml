@@ -17,6 +17,7 @@
             </header>
 
             <form id="loginForm" asp-controller="Home" asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
                 <input class="w-full border border-gray-nurse-100 p-2 mb-4" name="Email" placeholder="Email" type="email" />
                 <input class="w-full border border-gray-nurse-100 p-2 mb-4" name="Password" placeholder="Password" type="password" />
             </form>

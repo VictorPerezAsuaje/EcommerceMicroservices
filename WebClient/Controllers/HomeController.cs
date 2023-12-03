@@ -14,11 +14,13 @@ public class HomeController : Controller
 {
     IAuthService _authService;
     ITokenProvider _tokenProvider;
+    IWebHostEnvironment _env;
 
-    public HomeController(IAuthService authenticationService, ITokenProvider tokenProvider)
+    public HomeController(IAuthService authenticationService, ITokenProvider tokenProvider, IWebHostEnvironment env)
     {
         _authService = authenticationService;
         _tokenProvider = tokenProvider;
+        _env = env;
     }
 
     [Route("")]
@@ -34,6 +36,7 @@ public class HomeController : Controller
     }
 
     [HttpPost("login")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginPostDTO dto)
     {
         if (!ModelState.IsValid)
@@ -83,6 +86,7 @@ public class HomeController : Controller
     }
 
     [HttpPost("forgot-password")]
+    [ValidateAntiForgeryToken]
     public IActionResult ForgotPassword(ForgotPasswordPostDTO dto)
     {
         if (!ModelState.IsValid)
@@ -108,6 +112,7 @@ public class HomeController : Controller
     }
 
     [HttpPost("register")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterPostDTO dto)
     {
         if (!ModelState.IsValid)

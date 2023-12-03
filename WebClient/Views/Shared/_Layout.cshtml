@@ -11,10 +11,10 @@
 
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body hx-boost="true">
+<body hx-boost="true" hx-swap='innerHTML show:no-scroll'>
     <partial name="Partials/_Menu" />
 
-    <main role="main" class="mx-auto mt-28 min-h-screen">
+    <main role="main" class="mx-auto mt-28 min-h-screen" >
         @RenderBody()
     </main>
 
