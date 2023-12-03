@@ -1,7 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Services.Catalog.Application.Categories;
-using Services.Catalog.Application.Reviews;
-using Services.Catalog.Application.Tags;
 using Services.Catalog.Domain;
 using Services.Catalog.Infrastructure;
 

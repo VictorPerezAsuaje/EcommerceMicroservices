@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Services.Catalog.Domain;
+using Services.Catalog.Domain;
 using Services.Catalog.Infrastructure;
 
 namespace Services.Catalog.Application.Tags;
