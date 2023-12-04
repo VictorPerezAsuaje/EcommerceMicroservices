@@ -34,9 +34,6 @@ public class CartController : Controller
     [HttpPut("{from}/transfer-to/{to}")]
     public async Task<IActionResult> TransferCartItems(Guid from, Guid to)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(new ResponseDTO(false, ModelState.GetErrorsAsString()));
-
         if (from == default(Guid))
             return NotFound("The origin could not be found.");
 

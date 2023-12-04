@@ -107,7 +107,17 @@ public class CartControllerTests : IClassFixture<CustomWebApplicationFactory>
         }
 
         item.Should().NotBeNull();
-        item.Should().BeEquivalentTo(
+
+        var transformedItem = new CartItem(
+            clientId: item.ClientId,
+            productId: item.ProductId,
+            thumbnailUrl: item.ThumbnailUrl,
+            name: item.Name,
+            price: item.Price,
+            amount: item.Amount
+        ).ApplyDiscount(item.DiscountApplied);
+
+        transformedItem.Should().BeEquivalentTo(
             new CartItem(
                 clientId: DbInitializer.ClientIdOne, 
                 productId: dto.ProductId,
@@ -115,7 +125,8 @@ public class CartControllerTests : IClassFixture<CustomWebApplicationFactory>
                 name: dto.Name,
                 price: dto.Price,
                 amount: dto.Amount
-            ).ApplyDiscount(dto.DiscountApplied)
+            )
+            .ApplyDiscount(dto.DiscountApplied)          
         );
     }
 
@@ -271,7 +282,38 @@ public class CartControllerTests : IClassFixture<CustomWebApplicationFactory>
         }
 
         itemsOnClientOne.Should().NotBeNull();
-        itemsOnClientOne.Should().BeEquivalentTo(expectedOutputClientOne);
+        itemsOnClientOne.Select(item=> 
+            new CartItem(
+                clientId: item.ClientId,
+                productId: item.ProductId,
+                thumbnailUrl: item.ThumbnailUrl,
+                name: item.Name,
+                price: item.Price,
+                amount: item.Amount
+            ).ApplyDiscount(item.DiscountApplied)
+        ).Should().BeEquivalentTo(expectedOutputClientOne);
         itemsOnClientTwo.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData(default, default)]
+    [InlineData("11111111-1111-1111-1111-111111111111", null)]
+    [InlineData("11111111-1111-1111-1111-111111111111", default)]
+    [InlineData(null, "11111111-1111-1111-1111-111111111111")]
+    [InlineData(default, "11111111-1111-1111-1111-111111111111")]
+    public async Task TransferCartItems_WithInvalidOriginOrDestinyGuid_AddsNonexistentToDestinyAndOriginGetsRemoved(Guid from, Guid to)
+    {
+        // Arrage
+
+        // Act
+        var result = await _client.PutAsync("/cart/" + from + "/transfer-to/" + to, null);
+
+        // Assert
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        var response = await result.Content.ReadAsStringAsync();
+        response.Should().NotBeNull();
+        response.Should().NotBeNullOrWhiteSpace();
     }
 }
