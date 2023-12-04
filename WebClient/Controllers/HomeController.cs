@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using WebClient.Models;
 using WebClient.Services.Auth;
+using WebClient.Services.Cart;
 
 namespace WebClient.Controllers;
 
@@ -13,14 +14,16 @@ namespace WebClient.Controllers;
 public class HomeController : Controller
 {
     IAuthService _authService;
+    ICartService _cartService;
     ITokenProvider _tokenProvider;
     IWebHostEnvironment _env;
 
-    public HomeController(IAuthService authenticationService, ITokenProvider tokenProvider, IWebHostEnvironment env)
+    public HomeController(IAuthService authenticationService, ITokenProvider tokenProvider, IWebHostEnvironment env, ICartService cartService)
     {
         _authService = authenticationService;
         _tokenProvider = tokenProvider;
         _env = env;
+        _cartService = cartService;
     }
 
     [Route("")]
@@ -57,18 +60,48 @@ public class HomeController : Controller
 
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
 
+            var clientId = jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub).Value;
+            var clientEmail = jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
+            var clientName = jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Name).Value;
+
             identity.AddClaims(new List<Claim>()
             {
-                new Claim(JwtRegisteredClaimNames.Email, jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value),
-                new Claim(JwtRegisteredClaimNames.Sub, jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub).Value),
-                new Claim(JwtRegisteredClaimNames.Name, jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Name).Value),
-                new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value),
+                new Claim(JwtRegisteredClaimNames.Email, clientEmail),
+                new Claim(JwtRegisteredClaimNames.Sub, clientId),
+                new Claim(JwtRegisteredClaimNames.Name, clientName),
+                new Claim(ClaimTypes.Name, clientName),
             });
 
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
             _tokenProvider.SetToken(result.Value);
+
+            string? fromId = null;
+            Request.Cookies.TryGetValue("SessionId", out fromId);
+
+            if(fromId == clientId)
+                return RedirectToAction(nameof(Index));
+
+            Response.Cookies.Delete("SessionId");
+            Response.Cookies.Append("SessionId", clientId, new CookieOptions
+            {
+                Expires = DateTimeOffset.Now.AddMonths(1),
+                HttpOnly = true,
+            });
+
+            if (!Guid.TryParse(fromId, out Guid fromGuid))
+            {
+                // Notify that cart items could not be transferred properly.
+                return RedirectToAction(nameof(Index));
+            }
+
+            var response = await _cartService.TransferCartItemsAsync(fromGuid, Guid.Parse(clientId));
+
+            if (response.IsFailure)
+            {
+                // Notify that cart items could not be transferred properly.
+            }
 
             return RedirectToAction(nameof(Index));
         }

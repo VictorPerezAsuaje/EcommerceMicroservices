@@ -31,6 +31,34 @@ public class CartController : Controller
         }
     }
 
+    [HttpPut("{from}/transfer-to/{to}")]
+    public async Task<IActionResult> TransferCartItems(Guid from, Guid to)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(new ResponseDTO(false, ModelState.GetErrorsAsString()));
+
+        if (from == default(Guid))
+            return NotFound("The origin could not be found.");
+
+        if (to == default(Guid))
+            return NotFound("The destiny could not be found.");
+
+        try
+        {
+            ResponseDTO result = (await _cartService.TransferCartItemsAsync(from, to)).ToResponseDTO();
+
+            if (result.IsFailure)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            // Log exception
+            return StatusCode(500, "There was an error trying to complete the request");
+        }
+    }
+
     [HttpPost("{clientId}")]
     public async Task<IActionResult> AddProductToCart(Guid clientId, [FromBody] CartItemPostDTO dto)
     {

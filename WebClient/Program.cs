@@ -6,6 +6,7 @@ using WebClient.Services.Cart;
 using WebClient.Services.Catalog.Categories;
 using WebClient.Services.Catalog.Products;
 using WebClient.Services.Catalog.Tags;
+using WebClient.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +53,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<SessionMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

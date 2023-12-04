@@ -8,6 +8,7 @@ public interface ICartService
     Task<ResponseDTO> UpdateCartItemAsync(Guid clientId, Guid productId, CartItemPutDTO dto);
     Task<ResponseDTO> RemoveCartItemAsync(Guid clientId, Guid productId);
     Task<ResponseDTO> AddCartItemAsync(Guid clientId, CartItemPostDTO dto);
+    Task<ResponseDTO> TransferCartItemsAsync(Guid fromId, Guid toId);
 }
 
 public class CartService : ICartService
@@ -46,6 +47,15 @@ public class CartService : ICartService
         {
             EndpointType = EndpointType.DELETE,
             Url = _cartOptions.BaseUrl + "/cart/" + clientId + "/" + productId
+        });
+    }
+
+    public async Task<ResponseDTO> TransferCartItemsAsync(Guid fromId, Guid toId)
+    {
+        return await _sender.SendAsync(new RequestDTO()
+        {
+            EndpointType = EndpointType.PUT,
+            Url = _cartOptions.BaseUrl + "/cart/" + fromId + "/transfer-to/" + toId
         });
     }
 

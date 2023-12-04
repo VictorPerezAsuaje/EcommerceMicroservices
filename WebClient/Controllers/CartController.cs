@@ -21,16 +21,13 @@ public class CartController : Controller
 
         try
         {
-            // Get cart from temporary storage in case there is for the client's SessionId
-            if (!User.Identity.IsAuthenticated)
+            string? guid = null;
+            Request.Cookies.TryGetValue("SessionId", out guid);
+
+            if (!Guid.TryParse(guid, out Guid clientId))
                 return PartialView("Partials/_Cart", cart);
 
-            string? clientId = User.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
-
-            if (!Guid.TryParse(clientId, out Guid guid))
-                return PartialView("Partials/_Cart", cart);
-
-            var result = await _cartService.GetCartByClientIdAsync(guid);
+            var result = await _cartService.GetCartByClientIdAsync(clientId);
 
             if (result.IsFailure)
                 return PartialView("Partials/_Cart", cart);
@@ -51,13 +48,8 @@ public class CartController : Controller
     {
         try
         {
-            // Set cartData in temporary table based on user's SessionId
-            if (!User.Identity.IsAuthenticated)
-            {
-                return Ok();
-            }
-
-            string? guid = User.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            string? guid = null;
+            Request.Cookies.TryGetValue("SessionId", out guid);
 
             if (!Guid.TryParse(guid, out Guid clientId))
                 return BadRequest();

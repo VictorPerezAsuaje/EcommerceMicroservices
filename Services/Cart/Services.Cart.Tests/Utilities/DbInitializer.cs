@@ -18,8 +18,9 @@ internal class DbInitializer
         new CartItem(ClientIdOne, Guid.Parse("17111111-1111-1111-1111-111111111111"), "thumbnail6.jpg", "Product F", 49.99, 1),
         new CartItem(ClientIdOne, Guid.Parse("18111111-1111-1111-1111-111111111111"), "thumbnail7.jpg", "Product G", 9.99, 5),
         new CartItem(ClientIdOne, Guid.Parse("19111111-1111-1111-1111-111111111111"), "thumbnail8.jpg", "Product H", 34.50, 2),
+        new CartItem(ClientIdTwo, Guid.Parse("12111111-1111-1111-1111-111111111111"), "thumbnail1.jpg", "Product A", 19.99, 10),
         new CartItem(ClientIdTwo, Guid.Parse("22111111-1111-1111-1111-111111111111"), "thumbnail9.jpg", "Product I", 29.99, 3),
-        new CartItem(ClientIdTwo, Guid.Parse("23111111-1111-1111-1111-111111111111"), "thumbnail10.jpg", "Product J", 44.75, 1)
+        new CartItem(ClientIdTwo, Guid.Parse("23111111-1111-1111-1111-111111111111"), "thumbnail10.jpg", "Product J", 44.75, 1),
     };
 
     public static void SeedData(CartDbContext context)

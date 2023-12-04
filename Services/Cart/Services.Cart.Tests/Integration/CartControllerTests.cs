@@ -235,4 +235,43 @@ public class CartControllerTests : IClassFixture<CustomWebApplicationFactory>
 
         item.Should().BeNull();
     }
+
+    [Fact]
+    public async Task TransferCartItems_OriginAndDestinyWithData_AddsNonexistentToDestinyAndOriginGetsRemoved()
+    {
+        // Arrage
+        List<CartItem> expectedOutputClientOne = new List<CartItem>(DbInitializer.CartItems.Where(x => x.ClientId == DbInitializer.ClientIdOne));
+
+        expectedOutputClientOne.AddRange(
+            DbInitializer.CartItems
+                .Where(x => x.ClientId == DbInitializer.ClientIdTwo)
+                .Where(x => !expectedOutputClientOne.Select(y => y.ProductId).Contains(x.ProductId))
+                .Select(x => new CartItem(DbInitializer.ClientIdOne, x.ProductId, x.ThumbnailUrl, x.Name, x.Price, x.Amount))
+        );
+
+        // Act
+        var result = await _client.PutAsync("/cart/" + DbInitializer.ClientIdTwo + "/transfer-to/" + DbInitializer.ClientIdOne, null);
+
+        // Assert
+        result.EnsureSuccessStatusCode();
+
+        var response = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        response.Should().NotBeNull();
+        response.IsSuccess.Should().Be(true);
+        response.Error.Should().BeNullOrEmpty();
+
+        List<CartItem> itemsOnClientOne = new();
+        List<CartItem> itemsOnClientTwo = new();
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CartDbContext>();
+            itemsOnClientOne = await context.CartItems.Where(x => x.ClientId == DbInitializer.ClientIdOne).ToListAsync();
+            itemsOnClientTwo = await context.CartItems.Where(x => x.ClientId == DbInitializer.ClientIdTwo).ToListAsync();
+        }
+
+        itemsOnClientOne.Should().NotBeNull();
+        itemsOnClientOne.Should().BeEquivalentTo(expectedOutputClientOne);
+        itemsOnClientTwo.Should().BeEmpty();
+    }
 }

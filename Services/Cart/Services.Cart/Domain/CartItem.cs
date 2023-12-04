@@ -2,7 +2,8 @@
 
 public class CartItem
 {
-    public Guid ClientId { get; private set; }
+    // Whether SessionId or Authenticated ClientId
+    public Guid ClientId { get; private set; } 
     public Guid ProductId { get; private set; }
 
     public string ThumbnailUrl { get; private set; }
@@ -12,6 +13,9 @@ public class CartItem
     public double DiscountApplied { get; private set; } = 0;
     public double ComputedPrice => Price * Amount - (Price * Amount * DiscountApplied);
     public bool IsFree => DiscountApplied == 1 || Price == 0;
+    public DateTime? ExpirationTime { get; private set; }
+
+    protected CartItem() { /* EF */}
 
     public CartItem(Guid clientId, Guid productId, string thumbnailUrl, string name, double price, int amount)
     {
@@ -27,6 +31,12 @@ public class CartItem
         if (amount < 0) amount = 0;
 
         Amount = amount;        
+    }
+
+    public CartItem RenewExpirationTime()
+    {
+        ExpirationTime = ExpirationTime is null ? DateTime.UtcNow : DateTime.UtcNow.AddMonths(1);
+        return this;
     }
 
     public CartItem ApplyDiscount(double discount)
