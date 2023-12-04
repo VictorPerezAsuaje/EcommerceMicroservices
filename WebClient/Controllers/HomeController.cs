@@ -7,6 +7,7 @@ using System.Security.Claims;
 using WebClient.Models;
 using WebClient.Services.Auth;
 using WebClient.Services.Cart;
+using WebClient.Utilities;
 
 namespace WebClient.Controllers;
 
@@ -28,7 +29,7 @@ public class HomeController : Controller
 
     [Route("")]
     public IActionResult Index()
-    {
+    {        
         return View();
     }
 
@@ -92,7 +93,13 @@ public class HomeController : Controller
 
             if (!Guid.TryParse(fromId, out Guid fromGuid))
             {
-                // Notify that cart items could not be transferred properly.
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error transfering items";
+                    x.Message = "There was an error trying to transfer the items you had in your cart before authentication.";
+                    x.Icon = NotificationIcon.error;
+                });
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -100,7 +107,12 @@ public class HomeController : Controller
 
             if (response.IsFailure)
             {
-                // Notify that cart items could not be transferred properly.
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error transfering items";
+                    x.Message = response.Error;
+                    x.Icon = NotificationIcon.error;
+                });
             }
 
             return RedirectToAction(nameof(Index));
@@ -186,6 +198,12 @@ public class HomeController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+    }
+
+    [HttpGet("Notify")]
+    public async Task<IActionResult> Notify()
+    {
+        return PartialView("Partials/_Notification");
     }
 
 

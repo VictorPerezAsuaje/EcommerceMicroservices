@@ -10,9 +10,19 @@
     @await RenderSectionAsync("Metatags", required: false)
 
     @await RenderSectionAsync("Styles", required: false)
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <body hx-boost="true" hx-swap='innerHTML show:no-scroll'>
     <partial name="Partials/_Menu" />
+
+    <div id="notificationWrapper" 
+         hx-get="/Notify"
+         hx-swap="innerHTML"
+         hx-trigger="notification-added from:body">
+        
+    </div>
 
     <main role="main" class="mx-auto mt-28 min-h-screen" >
         @RenderBody()

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using WebClient.Models;
 using WebClient.Services.Cart;
+using WebClient.Utilities;
 
 namespace WebClient.Controllers;
 
@@ -37,6 +39,13 @@ public class CartController : Controller
         catch (Exception ex)
         {
             // Log
+
+            this.InvokeNotification(x =>
+            {
+                x.Title = "Error loading cart";
+                x.Message = "There was an error trying to load the cart.";
+                x.Icon = NotificationIcon.error;
+            });
         }
 
         return PartialView("Partials/_Cart", cart);
@@ -52,18 +61,42 @@ public class CartController : Controller
             Request.Cookies.TryGetValue("SessionId", out guid);
 
             if (!Guid.TryParse(guid, out Guid clientId))
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error adding the product";
+                    x.Message = "The product could not be added.";
+                    x.Icon = NotificationIcon.error;
+                });
+
                 return BadRequest();
+            }
 
             var result = await _cartService.AddCartItemAsync(clientId, dto);
 
             if (result.IsFailure)
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error adding the product";
+                    x.Message = "The product could not be added.";
+                    x.Icon = NotificationIcon.error;
+                });
+
                 return BadRequest();
+            }
 
             Response.Headers.Add("HX-Trigger-After-Swap", "cart-item-added");
         }
         catch (Exception ex)
         {
             // Log
+            this.InvokeNotification(x =>
+            {
+                x.Title = "Error adding the product";
+                x.Message = "There was an error trying to add the product to the cart.";
+                x.Icon = NotificationIcon.error;
+            });
         }
 
         return Ok();
@@ -75,12 +108,21 @@ public class CartController : Controller
     {
         try
         {
-            // Set cartData in temporary table based on user's SessionId
             string? guid = null;
             Request.Cookies.TryGetValue("SessionId", out guid);
 
             if (!Guid.TryParse(guid, out Guid clientId))
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error removing item";
+                    x.Message = "The product could not be removed.";
+                    x.Icon = NotificationIcon.error;
+                });
+
                 return BadRequest();
+            }
+                
 
             var result = await _cartService.RemoveCartItemAsync(clientId, productId);
 
@@ -92,6 +134,12 @@ public class CartController : Controller
         catch (Exception ex)
         {
             // Log
+            this.InvokeNotification(x =>
+            {
+                x.Title = "Error removing the product";
+                x.Message = "There was an error trying to remove the product from the cart.";
+                x.Icon = NotificationIcon.error;
+            });
         }
 
         return Ok();
@@ -103,28 +151,47 @@ public class CartController : Controller
     {
         try
         {
-            // Set cartData in temporary table based on user's SessionId
-            if (!User.Identity.IsAuthenticated)
-            {
-                return Ok();
-            }
-
-            string? guid = User.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            string? guid = null;
+            Request.Cookies.TryGetValue("SessionId", out guid);
 
             if (!Guid.TryParse(guid, out Guid clientId))
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error updating item";
+                    x.Message = "The product could not be updated.";
+                    x.Icon = NotificationIcon.error;
+                });
+
                 return BadRequest();
+            }
 
             CartItemPutDTO dto = new CartItemPutDTO() { Amount = amount };
             var result = await _cartService.UpdateCartItemAsync(clientId, productId, dto);
 
             if (result.IsFailure)
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error updating item";
+                    x.Message = "The product could not be updated.";
+                    x.Icon = NotificationIcon.error;
+                });
+
                 return BadRequest();
+            }
 
             Response.Headers.Add("HX-Trigger-After-Swap", "cart-item-added");
         }
         catch (Exception ex)
         {
             // Log
+            this.InvokeNotification(x =>
+            {
+                x.Title = "Error updating the product";
+                x.Message = "There was an error trying to update the product.";
+                x.Icon = NotificationIcon.error;
+            });
         }
 
         return Ok();

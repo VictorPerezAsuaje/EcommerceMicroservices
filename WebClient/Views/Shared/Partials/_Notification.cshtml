@@ -1,0 +1,25 @@
+﻿@using System.Text.Json
+@{
+    string json = TempData["Notification"] as string;
+
+    if (string.IsNullOrWhiteSpace(json))
+        return;
+
+    Notification? notification = JsonSerializer.Deserialize<Notification>(json);
+
+    if (notification is null)
+        return;
+}
+
+<script id="notificationScript" type="text/javascript">
+    (
+        function () {
+            Swal.fire({
+                title: '@notification.Title',
+                text: '@notification.Message',
+                icon: '@notification.Icon'
+            });
+            document.getElementById("notificationScript").remove();
+        }
+    )()
+</script>

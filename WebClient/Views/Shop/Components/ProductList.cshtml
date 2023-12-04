@@ -1,18 +1,9 @@
 ﻿@using WebClient.Controllers
 @using WebClient.Services
 @using WebClient.Services.Catalog.Products
-@model ResponseDTO<List<ProductGetDTO>>
+@model List<ProductGetDTO>
 
-@if (Model.IsFailure)
-{
-    <p class="text-rose-600">
-        @Model.Error
-    </p>
-
-    return;
-}
-
-@foreach (var product in Model.Value)
+@foreach (var product in Model)
 {
     <article class="flex flex-col justify-center text-center">
         <div class="relative overflow-hidden group h-[350px]">

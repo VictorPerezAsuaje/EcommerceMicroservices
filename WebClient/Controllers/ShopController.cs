@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using WebClient.Models;
 using WebClient.Services;
 using WebClient.Services.Auth;
 using WebClient.Services.Cart;
@@ -8,6 +9,7 @@ using WebClient.Services.Catalog.Categories;
 using WebClient.Services.Catalog.Products;
 using WebClient.Services.Catalog.Reviews;
 using WebClient.Services.Catalog.Tags;
+using WebClient.Utilities;
 
 namespace WebClient.Controllers;
 
@@ -63,64 +65,148 @@ public class ShopController : Controller
     public async Task<IActionResult> Index(string? category = null, string? tag = null)
     {
         ShopSearchFilter filter = new ShopSearchFilter();
-        filter.CategorySelected = category;
-        filter.SelectedTags.Add(tag);
 
-        var categoryResult = await _categoryService.GetAllAsync();
+        try
+        {
+            filter.CategorySelected = category;
+            filter.SelectedTags.Add(tag);
 
-        if (categoryResult.IsFailure)
-            return View(filter);
+            var categoryResult = await _categoryService.GetAllAsync();
 
-        var tagResult = await _tagService.GetAllAsync();
+            if (categoryResult.IsFailure)
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error loading categories";
+                    x.Message = "There was an error trying to retrieve the categories.";
+                    x.Icon = NotificationIcon.error;
+                });
 
-        if (tagResult.IsFailure)
-            return View(filter);
+                return View(filter);
+            }
 
-        filter.AvailableCategories = categoryResult.Value;
-        filter.AvailableTags = tagResult.Value;
+            var tagResult = await _tagService.GetAllAsync();
+
+            if (tagResult.IsFailure)
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error loading tags";
+                    x.Message = "There was an error trying to retrieve the tags.";
+                    x.Icon = NotificationIcon.error;
+                });
+
+                return View(filter);
+            }
+
+            filter.AvailableCategories = categoryResult.Value;
+            filter.AvailableTags = tagResult.Value;
+        }
+        catch (Exception ex)
+        {
+            this.InvokeNotification(x =>
+            {
+                x.Title = "Error loading tags";
+                x.Message = "There was an error trying to load the page.";
+                x.Icon = NotificationIcon.error;
+            });
+        }
+
         return View(filter);
     }
 
     [Route("product-list")]
     public async Task<IActionResult> ProductList(string? category = null, string? tags = null)
     {
-        ResponseDTO<List<ProductGetDTO>> result = await _productService.GetAllAsync();
-
-        if(result.IsFailure)
+        try
         {
-            return PartialView("Components/ProductList", result);
+            ResponseDTO<List<ProductGetDTO>> result = await _productService.GetAllAsync();
+
+            if (result.IsFailure)
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error loading tags";
+                    x.Message = "There was an error trying to retrieve the product list.";
+                    x.Icon = NotificationIcon.error;
+                });
+
+                return PartialView("Components/ProductList", result.Value);
+            }
+
+            List<ProductGetDTO> products = result.Value;
+
+            if (!string.IsNullOrWhiteSpace(category))
+                products = products.Where(x => x.Category.Name == category).ToList();
+
+            if (!string.IsNullOrWhiteSpace(tags))
+            {
+                string[] selectedTags = tags.Split(',');
+                products = products.Where(x => x.Tags.Any(y => selectedTags.Contains(y.Name))).ToList();
+            }
+
+            return PartialView("Components/ProductList", products);
         }
-
-        List<ProductGetDTO> products = result.Value;
-
-        if(!string.IsNullOrWhiteSpace(category))
-            products = products.Where(x => x.Category.Name == category).ToList();
-
-        if (!string.IsNullOrWhiteSpace(tags))
+        catch(Exception ex) 
         {
-            string[] selectedTags = tags.Split(',');
-            products = products.Where(x => x.Tags.Any(y => selectedTags.Contains(y.Name))).ToList();
-        }
+            this.InvokeNotification(x =>
+            {
+                x.Title = "Error loading product";
+                x.Message = "There was an error trying to load the product list.";
+                x.Icon = NotificationIcon.error;
+            });
 
-        return PartialView(
-            "Components/ProductList", 
-            new ResponseDTO<List<ProductGetDTO>>(true, products));
+            return PartialView("Components/ProductList", new List<ProductGetDTO>());
+        }        
     }
 
     [Route("{id}")]
     public async Task<IActionResult> Product(string id)
     {
-        bool isValidGuid = Guid.TryParse(id, out Guid guid);
+        try
+        {
+            bool isValidGuid = Guid.TryParse(id, out Guid guid);
 
-        if (!isValidGuid || guid == default(Guid))
+            if (!isValidGuid || guid == default(Guid))
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error loading product";
+                    x.Message = "The selected product could not be loaded.";
+                    x.Icon = NotificationIcon.error;
+                });
+
+                return RedirectToAction("Index");
+            }
+
+            ResponseDTO<ProductGetDTO> result = await _productService.GetByIdAsync(guid);
+
+            if (result.IsFailure)
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error loading product";
+                    x.Message = "The selected product could not be loaded.";
+                    x.Icon = NotificationIcon.error;
+                });
+
+                return RedirectToAction("Index");
+            }
+
+            return View(result.Value);
+        }
+        catch (Exception ex)
+        {
+            this.InvokeNotification(x =>
+            {
+                x.Title = "Error loading product";
+                x.Message = "There was an error trying to load the product.";
+                x.Icon = NotificationIcon.error;
+            });
+
             return RedirectToAction("Index");
+        }       
 
-        ResponseDTO<ProductGetDTO> result = await _productService.GetByIdAsync(guid);
-
-        if (result.IsFailure)
-            return RedirectToAction("Index");
-
-        return View(result.Value);
     }    
 
     
