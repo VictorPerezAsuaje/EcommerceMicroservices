@@ -33,6 +33,53 @@ public class ShopController : Controller
         _tagService = tagService;
     }
 
+    private async Task SeedProductData()
+    {
+        List<Task> tasks = new List<Task>();
+
+        foreach (var tag in ProductData.TagsToSeed)
+        {
+            tasks.Add(_tagService.CreateAsync(tag));
+        }
+
+        foreach (var category in ProductData.CategoriesToSeed)
+        {
+            tasks.Add(_categoryService.CreateAsync(category));
+        }
+
+        await Task.WhenAll(tasks);
+
+        tasks = new();
+
+        foreach (var product in ProductData.ProductsToSeed)
+        {
+            tasks.Add(_productService.CreateAsync(product));
+        }
+
+        await Task.WhenAll(tasks);
+    }
+
+    [Route("")]
+    public async Task<IActionResult> Index(string? category = null, string? tag = null)
+    {
+        ShopSearchFilter filter = new ShopSearchFilter();
+        filter.CategorySelected = category;
+        filter.SelectedTags.Add(tag);
+
+        var categoryResult = await _categoryService.GetAllAsync();
+
+        if (categoryResult.IsFailure)
+            return View(filter);
+
+        var tagResult = await _tagService.GetAllAsync();
+
+        if (tagResult.IsFailure)
+            return View(filter);
+
+        filter.AvailableCategories = categoryResult.Value;
+        filter.AvailableTags = tagResult.Value;
+        return View(filter);
+    }
 
     [Route("product-list")]
     public async Task<IActionResult> ProductList(string? category = null, string? tags = null)
@@ -59,61 +106,6 @@ public class ShopController : Controller
             "Components/ProductList", 
             new ResponseDTO<List<ProductGetDTO>>(true, products));
     }
-
-
-    [HttpPost("SeedProductData")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SeedProductData()
-    {
-        List<Task> tasks = new List<Task>();
-
-        foreach (var tag in ProductData.TagsToSeed)
-        {
-            tasks.Add(_tagService.CreateAsync(tag));
-        }
-
-        foreach (var category in ProductData.CategoriesToSeed)
-        {
-            tasks.Add(_categoryService.CreateAsync(category));
-        }
-
-        await Task.WhenAll(tasks);
-
-        tasks = new();
-
-        foreach (var product in ProductData.ProductsToSeed)
-        {
-            tasks.Add(_productService.CreateAsync(product));
-        }
-
-        await Task.WhenAll(tasks);
-
-        return RedirectToAction(nameof(Index));
-    }
-
-
-    [Route("")]
-    public async Task<IActionResult> Index(string? category = null, string? tag = null)
-    {
-        ShopSearchFilter filter = new ShopSearchFilter();
-        filter.CategorySelected = category;
-        filter.SelectedTags.Add(tag);
-
-        var categoryResult = await _categoryService.GetAllAsync();
-
-        if(categoryResult.IsFailure)
-            return View(filter);
-
-        var tagResult = await _tagService.GetAllAsync();
-
-        if (tagResult.IsFailure)
-            return View(filter);
-        
-        filter.AvailableCategories = categoryResult.Value;
-        filter.AvailableTags = tagResult.Value;       
-        return View(filter);
-    }
-
 
     [Route("{id}")]
     public async Task<IActionResult> Product(string id)

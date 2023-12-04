@@ -76,12 +76,8 @@ public class CartController : Controller
         try
         {
             // Set cartData in temporary table based on user's SessionId
-            if (!User.Identity.IsAuthenticated)
-            {
-                return Ok();
-            }
-
-            string? guid = User.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            string? guid = null;
+            Request.Cookies.TryGetValue("SessionId", out guid);
 
             if (!Guid.TryParse(guid, out Guid clientId))
                 return BadRequest();

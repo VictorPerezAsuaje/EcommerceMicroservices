@@ -12,39 +12,41 @@
     return;
 }
 
-@* @if(Model.Value.Count == 0)
-{
-    <form asp-controller="Shop" asp-action="SeedProductData" method="post">
-        <button class="bg-zuccini-700 text-white font-medium p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 cursor-pointer" type="submit">
-            SEED ME DATA
-        </button>
-    </form>    
-} *@
-
 @foreach (var product in Model.Value)
 {
-<article class="flex flex-col justify-center text-center">
-    <div class="relative overflow-hidden group h-[350px]">
-        <div class="absolute -bottom-10 w-full group-hover:-translate-y-20 transition-all ease-in-out duration-500">
-            <div class="flex flex-row justify-between mx-auto bg-white p-2 rounded-full w-fit gap-4">
-                <button class="border-2 text-zuccini-800 bg-white border-zuccini-800 hover:bg-zuccini-800 hover:text-white rounded-full  text-xs aspect-square w-8 transition-all duration-200 ease-in-out">
-                    <i class="fa-solid fa-heart"></i>
-                </button>
-                <button class="border-2 text-zuccini-800 bg-white border-zuccini-800 hover:bg-zuccini-800 hover:text-white rounded-full  text-xs aspect-square w-8 transition-all duration-200 ease-in-out">
-                    <i class="fa-solid fa-shopping-cart"></i>
-                </button>
-                <a asp-controller="Shop" asp-action="Product" asp-route-id="@product.Id" class="flex justify-center items-center border-2 text-zuccini-800 bg-white border-zuccini-800 hover:bg-zuccini-800 hover:text-white rounded-full text-xs aspect-square w-8 transition-all duration-200 ease-in-out">
-                    <i class="fa-solid fa-magnifying-glass-plus"></i>
-                </a>
+    <article class="flex flex-col justify-center text-center">
+        <div class="relative overflow-hidden group h-[350px]">
+            <div class="absolute -bottom-10 w-full group-hover:-translate-y-20 transition-all ease-in-out duration-500">
+                <div class="flex flex-row justify-between mx-auto bg-white p-2 rounded-full w-fit gap-4">
+                    <button class="border-2 text-zuccini-800 bg-white border-zuccini-800 hover:bg-zuccini-800 hover:text-white rounded-full  text-xs aspect-square w-8 transition-all duration-200 ease-in-out">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    <form hx-post="/cart"
+                          hx-swap="none">
+                        @Html.AntiForgeryToken()
+                        <input value="@product.Id" name="ProductId" hidden />
+                        <input value="https://source.unsplash.com/random?@product.Category?.Name,@product.Id" name="ThumbnailUrl" hidden />
+                        <input value="@product.Name" name="Name" hidden />
+                        <input value="@product.Price" name="Price" hidden />
+                        <input id="numberOfItemsToAdd" name="Amount" class="px-2 outline-none cursor-default" type="number" value="1" hidden />
+
+                        <button class="border-2 text-zuccini-800 bg-white border-zuccini-800 hover:bg-zuccini-800 hover:text-white rounded-full text-xs aspect-square w-8 transition-all duration-200 ease-in-out">
+                            <i class="fa-solid fa-cart-plus"></i>
+                        </button>
+                    </form>                    
+                    <a asp-controller="Shop" asp-action="Product" asp-route-id="@product.Id" class="flex justify-center items-center border-2 text-zuccini-800 bg-white border-zuccini-800 hover:bg-zuccini-800 hover:text-white rounded-full text-xs aspect-square w-8 transition-all duration-200 ease-in-out">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                    </a>
+                </div>
             </div>
-        </div>
 
             <img src="https://source.unsplash.com/random/350x500/?@product.Category.Name,@product.Name,@product.Id" class="object-cover h-[350px] w-full mb-4" />
-    </div>
+        </div>
 
-    <h4 class="text-md text-zuccini-900 mb-2 mt-4 hover:font-bold">
-        <a asp-controller="Shop" asp-action="Product" asp-route-id="@product.Id">@product.Name</a>
-    </h4>
+        <h4 class="text-md text-zuccini-900 mb-2 mt-4 hover:font-bold">
+            <a asp-controller="Shop" asp-action="Product" asp-route-id="@product.Id">@product.Name</a>
+        </h4>
+
         <p>@product.Price.ToString("c")</p>
-</article> 
+    </article> 
 }
