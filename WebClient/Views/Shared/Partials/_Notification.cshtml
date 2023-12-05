@@ -14,7 +14,15 @@
 <script id="notificationScript" type="text/javascript">
     (
         function () {
-            Swal.fire({
+            const swalConfig = Swal.mixin({
+                customClass: {
+                    confirmButton: 'bg-zuccini-700 text-white font-medium p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 cursor-pointer',
+                    cancelButton: 'bg-golden-600 text-white hover:bg-golden-400 p-3 font-medium z-[1] mb-8 transition-all ease-in-out duration-200'
+                },
+                buttonsStyling: false
+            })
+
+            swalConfig.fire({
                 title: '@notification.Title',
                 text: '@notification.Message',
                 icon: '@notification.Icon'

@@ -9,3 +9,4 @@ public class CartGetDTO
 
     public bool HasDiscounts => Total < SubTotal;
 }
+

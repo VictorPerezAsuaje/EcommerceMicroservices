@@ -1,0 +1,11 @@
+﻿@using WebClient.Services.Orders
+@model OrderPaymentMethodPostDTO
+
+@Html.ValidationMessageFor(x => x.SelectedValue, "", new { @class = "validation-message text-rose-600" })
+@foreach (var paymentMethod in Model.AvailablePayments)
+{
+    <label class="flex items-center gap-4 w-full border border-gray-nurse-100 p-4">
+        <input asp-for="SelectedValue" name="Payment.SelectedValue" type="radio" value="@paymentMethod.Name" checked="@(paymentMethod.Name == Model.SelectedValue)" />
+        @paymentMethod.Name
+    </label>
+}

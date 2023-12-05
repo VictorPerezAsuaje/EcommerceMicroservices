@@ -1,0 +1,144 @@
+﻿@using WebClient.Services.Orders
+@model OrderPostDTO
+
+@{
+    Layout = "_OrderLayout";
+}
+
+<a asp-controller="Shop" asp-action="Index" class="text-sm text-gray-nurse-700 underline underline-offset-2 hover:underline-none">← Go back to the shop</a>
+
+<form id="orderForm" asp-controller="Orders" asp-action="PlaceOrder" method="post">
+    @Html.AntiForgeryToken()
+    <section class="flex flex-row gap-16 min-h-screen">
+        <div class="flex-[4] overflow-y-auto">
+            <header class="flex flex-row justify-between items-center flex-1 mt-8 mb-4">
+                <h3 class="text-xl font-bold">Cart items</h3>
+            </header>
+
+            @for (int i = 0; i < Model.Items.Count; i++)
+            {
+                var item = Model.Items[i];
+
+                <input value="@item.ProductId" name="Items[@i].ProductId" hidden />
+                <input value="@item.Name" name="Items[@i].Name" hidden />
+                <input value="@item.Price" name="Items[@i].Price" hidden />
+                <input value="@item.Amount" name="Items[@i].Amount" hidden />
+                <input value="@item.DiscountApplied" name="Items[@i].DiscountApplied" hidden />
+
+                <div class="flex flex-row justify-between gap-4 mb-4">
+                    <div class="flex flex-row gap-4">
+                        <img src="https://source.unsplash.com/random/50x50/?@item.Name,@item.ProductId" class="object-cover aspect-square w-[50px]">
+
+                        <div>
+                            <h4>@item.Name</h4>
+                            <span class="flex flex-row text-gray-nurse-500 text-sm">
+                                @item.Price.ToString("c")
+                                <span class="mx-2">x</span>
+                                <span>@item.Amount</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-row flex-wrap gap-4 text-right items-center">
+                        <span class="font-bold">@((item.Amount * item.Price).ToString("c"))</span>
+                    </div>
+                </div>
+            }
+
+            <footer class="flex-1 flex flex-col max-h-[10vh] border-t-2 border-gray-nurse-200 pt-8 gap-4">
+                @if (Model.DiscountCodeApplied is null)
+                {
+                    <div class="flex flex-row gap-4">
+                        <input class="w-full border border-gray-nurse-100 p-2 mb-4 h-fit" asp-for="DiscountCodeApplied" placeholder="Discount code or gift card" />
+
+                        <button type="button" class="bg-zuccini-700 text-white font-medium p-2 h-fit hover:bg-zuccini-400 transition-all ease-in-out duration-200 cursor-pointer">APPLY</button>
+                    </div>
+                }
+                else
+                {
+                    <input asp-for="DiscountCodeApplied" hidden />
+                    <div class="flex flex-row justify-between items-center">
+                        <span>Discount applied</span>
+                        <span>@(Model.DiscountApplied * 100) %</span>
+                    </div>
+                }
+
+
+                <div class="flex flex-row justify-between items-center text-gray-nurse-300 text-sm">
+                    <span>Subtotal</span>
+                    <span>@Model.SubTotal.ToString("c")</span>
+                </div>
+
+                <div class="flex flex-row justify-between items-center text-gray-nurse-300 text-sm">
+                    <span>Shipping</span>
+                    <span>Enter shipping address</span>
+                </div>
+
+                <div class="flex flex-row justify-between items-center text-gray-nurse-300 text-sm">
+                    <span>Applicable taxes</span>
+                    <span>Enter shipping address</span>
+                </div>
+
+                <div class="flex flex-row justify-between items-center text-lg mt-4">
+                    <span class="font-bold">Total </span>
+                    <span class="font-bold text-lg">@Model.Total.ToString("c")</span>
+                </div>
+
+                <button type="submit" class="bg-zuccini-700 text-white font-medium p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 cursor-pointer" onclick="return orderFormValid()">COMPLETE PAYMENT</button>
+            </footer>
+        </div>
+        <div class="flex-[6]">
+            <details data-dropdown="shipping" open>
+                <summary class="text-xl text-zuccini-950 font-bold mt-8 mb-4">
+                    <i class="fa-solid fa-truck-fast mr-4"></i>
+                    Shipping & Delivery
+                </summary>           
+                
+                <div class="mb-4">
+                    @Html.ValidationMessageFor(x => x.ShippingFirstName, "", new { @class = "validation-message text-rose-600" })
+                    <input class="w-full border border-gray-nurse-100 p-2 mb-4" asp-for="ShippingFirstName" placeholder="First name" />
+
+                    @Html.ValidationMessageFor(x => x.ShippingLastName, "", new { @class = "validation-message text-rose-600" })
+                    <input class="w-full border border-gray-nurse-100 p-2 mb-4" asp-for="ShippingLastName" placeholder="Last name" />
+
+                    <select class="w-full border border-gray-nurse-100 p-2 mb-4" hx-get="/orders/available-countries?selected=@Model.Country?.SelectedValue" hx-trigger="load delay:200ms" hx-swap="outerHTML">
+                        <option value="">Select your country...</option>
+                    </select>
+
+                    @Html.ValidationMessageFor(x => x.ShippingAddress, "", new { @class = "validation-message text-rose-600" })
+                    <input class="w-full border border-gray-nurse-100 p-2 mb-4" asp-for="ShippingAddress" placeholder="Shipping address" />
+
+                    <label class="block">
+                        <input asp-for="SaveShippingData" type="checkbox" />
+                        Save this information for next time
+                    </label>
+                </div>
+
+                <h3 class="text-lg text-zuccini-950 font-bold mt-8 mb-4">Shipping method</h3>
+
+                <div hx-get="/orders/shipping-methods?selected=@Model.Shipping?.SelectedValue" hx-trigger="load delay:500ms" hx-swap="outerHTML">
+                    <div class="border border-gray-nurse-300 shadow rounded-md p-4 mt-10 w-full mx-auto animate-pulse">
+                        Loading...
+                    </div>
+                </div>
+            </details>
+            
+            <details data-dropdown="payments">
+                <summary class="text-xl text-zuccini-950 font-bold mt-8 mb-4">
+                    <i class="fa-solid fa-credit-card mr-4"></i>
+                    Payments
+                </summary>
+
+                <div hx-get="/orders/payment-methods?selected=@Model.Payment?.SelectedValue" hx-trigger="load delay:500ms" hx-swap="outerHTML">
+                    <div class="border border-gray-nurse-300 shadow rounded-md p-4 mt-10 w-full mx-auto animate-pulse">
+                        Loading...
+                    </div>
+                </div>
+            </details>               
+        </div>
+    </section>
+</form>
+
+@section Scripts{
+    <script src="/pages/place-order.js" asp-append-version="true"></script>
+}

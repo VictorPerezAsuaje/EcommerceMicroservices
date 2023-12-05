@@ -47,22 +47,28 @@
     }        
 </div>
 
-<footer class="flex-1 flex flex-row justify-between max-h-[10vh] border-t-2 border-gray-nurse-200 pt-8 items-center">
-    <span>Total: </span>
-    <span class="font-bold text-lg">
-        @if (Model.HasDiscounts)
-        {
-            <span class="line-through text-rose-600">@Model.Total.ToString("c")</span>
+<footer class="flex-1 flex flex-col max-h-[10vh] border-t-2 border-gray-nurse-200 pt-8 gap-4">
+    <div class="flex flex-row justify-between items-center">
+        <span>Total: </span>
+        <span class="font-bold text-lg">
+            @if (Model.HasDiscounts)
+            {
+                <span class="line-through text-rose-600">@Model.Total.ToString("c")</span>
 
-            <span class="flex items-center bg-rose-600 text-white text-xs rounded-lg font-bold h-6 px-1">
-                @Model.Total.ToString("c")
-            </span>
-        }
-        else
-        {
-            <span>@Model.Total.ToString("c")</span>
-        }
-    </span>
+                <span class="flex items-center bg-rose-600 text-white text-xs rounded-lg font-bold h-6 px-1">
+                    @Model.Total.ToString("c")
+                </span>
+            }
+            else
+            {
+                <span>@Model.Total.ToString("c")</span>
+            }
+        </span>
+    </div>
+   
+    <div class="flex flex-row justify-end">
+        <a asp-controller="Orders" asp-action="PlaceOrder" class="bg-zuccini-700 text-white font-medium p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 cursor-pointer">PLACE ORDER</a>
+    </div>
 </footer>
 
 <script id="loadCartItemsAddedScript" type="text/javascript">

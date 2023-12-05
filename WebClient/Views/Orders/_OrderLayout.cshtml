@@ -7,31 +7,27 @@
     <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
 
-    @await RenderSectionAsync("Metatags", required: false)
-
     @await RenderSectionAsync("Styles", required: false)
 
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body hx-boost="true" hx-swap='innerHTML show:no-scroll'>
-    <partial name="Partials/_Menu" />
-
-    <div id="notificationWrapper" 
+    <div id="notificationWrapper"
          hx-get="/Notify"
          hx-swap="innerHTML"
          hx-trigger="notification-added from:body">
-        <partial name="Partials/_Notification" />
+         <partial name="Partials/_Notification" />
     </div>
 
-    <main role="main" class="mx-auto mt-28 min-h-screen" >
+    <main role="main" class="mx-auto p-8 w-3/4 min-h-screen">
         @RenderBody()
     </main>
 
-    <partial name="Partials/_Footer" />
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
     <script src="https://unpkg.com/htmx.org@1.9.4"></script>
-    <script src="~/utils/utils.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

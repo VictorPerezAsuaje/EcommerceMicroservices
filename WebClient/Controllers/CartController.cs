@@ -27,12 +27,31 @@ public class CartController : Controller
             Request.Cookies.TryGetValue("SessionId", out guid);
 
             if (!Guid.TryParse(guid, out Guid clientId))
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error loading the cart";
+                    x.Message = "The cart could not be loaded.";
+                    x.Icon = NotificationIcon.error;
+                });
+
                 return PartialView("Partials/_Cart", cart);
+            }
 
             var result = await _cartService.GetCartByClientIdAsync(clientId);
 
             if (result.IsFailure)
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Error loading the cart";
+                    x.Message = "The cart could not be loaded.";
+                    x.Icon = NotificationIcon.error;
+                });
+
                 return PartialView("Partials/_Cart", cart);
+
+            }
 
             cart.Items = result.Value;
         }

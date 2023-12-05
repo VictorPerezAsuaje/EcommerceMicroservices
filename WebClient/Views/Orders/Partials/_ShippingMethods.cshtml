@@ -1,0 +1,11 @@
+﻿@using WebClient.Services.Orders
+@model OrderShippingMethodPostDTO
+
+@Html.ValidationMessageFor(x => x.SelectedValue, "", new { @class = "validation-message text-rose-600" })
+@foreach (var shippingMethod in Model.AvailableShippings)
+{
+    <label class="flex items-center gap-4 w-full border border-gray-nurse-100 p-4">
+        <input asp-for="SelectedValue" name="Shipping.SelectedValue" type="radio" value="@shippingMethod.Name" checked="@(shippingMethod.Name == Model.SelectedValue)" />
+        @shippingMethod.Name
+    </label>
+}

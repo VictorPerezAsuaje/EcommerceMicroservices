@@ -35,7 +35,7 @@ public class HomeController : Controller
 
     [HttpGet("login")]
     public IActionResult Login()
-    {
+    {        
         return View();
     }
 
