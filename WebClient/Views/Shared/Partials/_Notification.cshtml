@@ -24,7 +24,7 @@
 
             swalConfig.fire({
                 title: '@notification.Title',
-                text: '@notification.Message',
+                html: `@Html.Raw(notification.Message)`,
                 icon: '@notification.Icon'
             });
             document.getElementById("notificationScript").remove();

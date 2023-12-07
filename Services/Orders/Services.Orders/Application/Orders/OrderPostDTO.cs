@@ -8,6 +8,7 @@ public class OrderPostDTO
     public Guid ClientId { get; set; }
 
     [Required]
+    [MinLength(1)]
     public List<OrderItemPostDTO> Items { get; set; } = new();
 
     [Required]

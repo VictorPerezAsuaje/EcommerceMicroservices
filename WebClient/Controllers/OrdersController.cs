@@ -128,10 +128,17 @@ public class OrdersController : Controller
     {
         try
         {
-            throw new NotImplementedException();
-
             if (!ModelState.IsValid)
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Validation error";
+                    x.Message = ModelState.GetErrorsAsHtml();
+                    x.Icon = NotificationIcon.error;
+                });
+                
                 return View(order);
+            }
         }
         catch (Exception ex)
         {

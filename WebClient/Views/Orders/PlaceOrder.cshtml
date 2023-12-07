@@ -100,12 +100,7 @@
                     @Html.ValidationMessageFor(x => x.ShippingLastName, "", new { @class = "validation-message text-rose-600" })
                     <input class="w-full border border-gray-nurse-100 p-2 mb-4" asp-for="ShippingLastName" placeholder="Last name" />
 
-                    <select class="w-full border border-gray-nurse-100 p-2 mb-4" hx-get="/orders/available-countries?selected=@Model.Country?.SelectedValue" hx-trigger="load delay:200ms" hx-swap="outerHTML">
-                        <option value="">Select your country...</option>
-                    </select>
-
-                    @Html.ValidationMessageFor(x => x.ShippingAddress, "", new { @class = "validation-message text-rose-600" })
-                    <input class="w-full border border-gray-nurse-100 p-2 mb-4" asp-for="ShippingAddress" placeholder="Shipping address" />
+                    <partial name="Partials/_Address" model="Model.ShippingAddress" />
 
                     <label class="block">
                         <input asp-for="SaveShippingData" type="checkbox" />

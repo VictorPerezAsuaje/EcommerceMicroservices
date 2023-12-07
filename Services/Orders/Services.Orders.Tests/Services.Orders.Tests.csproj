@@ -29,10 +29,6 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Integration\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Services.Orders\Services.Orders.csproj" />
   </ItemGroup>
 

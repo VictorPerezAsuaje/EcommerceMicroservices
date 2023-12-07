@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Services.Orders.Application.Orders;
 using Services.Orders.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddDbContext<OrderDbContext>(opts =>
         });
 });
 
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -45,6 +47,11 @@ void ApplyMigration()
 
         if (_context.Database.GetPendingMigrations().Count() > 0)
             _context.Database.Migrate();
+
+        if (app.Environment.IsDevelopment())
+        {
+            DbInitializer.SeedData(_context);
+        }
     }
 }
 

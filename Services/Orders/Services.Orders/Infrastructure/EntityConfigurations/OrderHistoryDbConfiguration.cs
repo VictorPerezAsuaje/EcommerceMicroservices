@@ -4,17 +4,23 @@ using Services.Orders.Domain;
 
 namespace Services.Orders.Infrastructure.EntityConfigurations;
 
-internal class OrderHistoryDbConfiguration : IEntityTypeConfiguration<OrderStatusHistory>
+internal class OrderHistoryDbConfiguration : IEntityTypeConfiguration<OrderHistory>
 {
-    public void Configure(EntityTypeBuilder<OrderStatusHistory> builder)
+    public void Configure(EntityTypeBuilder<OrderHistory> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.ChangeDate).IsRequired();
-        builder.Property(x => x.Message).IsRequired();
-        builder.HasOne(x => x.Order)
-                .WithMany(x => x.StatusHistory)
-                .HasForeignKey(x => x.OrderId)
-                .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasMany(os => os.Statuses)
+           .WithOne(o => o.OrderHistory)
+           .HasForeignKey(os => os.OrderHistoryId)
+           .OnDelete(DeleteBehavior.ClientNoAction);
+
+        builder.HasOne(os => os.Order)
+           .WithOne(x => x.History)
+           .HasForeignKey<Order>(x => x.HistoryId)
+           .OnDelete(DeleteBehavior.ClientNoAction);
     }
 }
+
+
 

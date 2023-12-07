@@ -10,10 +10,6 @@ internal class OrderDbConfiguration : IEntityTypeConfiguration<Order>
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.ClientId).IsRequired();
-        builder.HasMany(x => x.StatusHistory)
-            .WithOne(x => x.Order)
-            .HasForeignKey(x => x.OrderId)
-            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(x => x.ShippingFirstName).IsRequired().HasMaxLength(1000);
         builder.Property(x => x.ShippingLastName).IsRequired().HasMaxLength(1000);
@@ -23,7 +19,7 @@ internal class OrderDbConfiguration : IEntityTypeConfiguration<Order>
             sa.HasOne(s => s.Country)
                 .WithMany()
                 .HasForeignKey(x => x.CountryName)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.ClientNoAction);
 
             sa.Property(s => s.MajorDivision).IsRequired().HasMaxLength(1000);
             sa.Property(s => s.MajorDivisionCode).HasMaxLength(100).HasDefaultValue(Address.NotApplicable);
@@ -44,7 +40,8 @@ internal class OrderDbConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(x => x.ShippingMethod).IsRequired().HasMaxLength(100);
         builder.Property(x => x.ShippingFees).IsRequired().HasMaxLength(2000);
 
-        builder.HasOne(x => x.DiscountCodeApplied).WithOne(x => x.Order).OnDelete(DeleteBehavior.SetNull);
+        builder.HasOne(x => x.DiscountCodeApplied).WithOne(x => x.Order).OnDelete(DeleteBehavior.ClientNoAction);
+
         builder.HasMany(x => x.Items)
             .WithOne(x => x.Order)
             .HasForeignKey(x => x.OrderId)
@@ -58,12 +55,22 @@ internal class OrderDbConfiguration : IEntityTypeConfiguration<Order>
         builder.HasOne(x => x.Shipping)
             .WithMany()
             .HasForeignKey(x => x.ShippingMethodName)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.ClientNoAction);
 
         builder.HasOne(x => x.PaymentMethod)
            .WithMany()
            .HasForeignKey(x => x.PaymentMethodName)
-           .OnDelete(DeleteBehavior.NoAction);
+           .OnDelete(DeleteBehavior.ClientNoAction);
+
+        builder.HasOne(x => x.CurrentOrderStatus)
+                .WithOne()
+                .HasForeignKey<Order>(x => x.CurrentOrderStatusId)
+                .OnDelete(DeleteBehavior.ClientNoAction);
+
+        builder.HasOne(o => o.History)
+            .WithOne(x => x.Order)
+            .HasForeignKey<Order>(x => x.HistoryId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
     }
 }
 

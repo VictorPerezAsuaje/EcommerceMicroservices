@@ -19,7 +19,8 @@ public class OrderController : ControllerBase
     {
         try
         {
-            return Ok((await _orderService.GetAllAsync()).ToResponseDTO());
+            var result = await _orderService.GetAllAsync();
+            return Ok(result.ToResponseDTO());
         }
         catch (Exception ex)
         {
@@ -51,7 +52,7 @@ public class OrderController : ControllerBase
     public async Task<IActionResult> CreateOrderAsync([FromBody] OrderPostDTO dto)
     {
         if(!ModelState.IsValid)
-            return BadRequest(ModelState);
+            return BadRequest(dto);
 
         try
         {
@@ -69,7 +70,7 @@ public class OrderController : ControllerBase
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> CancelOrderAsync(Guid id)
     {
         if (id == default)

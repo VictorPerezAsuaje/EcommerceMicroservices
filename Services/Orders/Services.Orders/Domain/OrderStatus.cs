@@ -28,4 +28,6 @@ public class OrderStatus
         Alias = alias;
         Name = name;
     }
+
+    public override string ToString() => Name;
 };

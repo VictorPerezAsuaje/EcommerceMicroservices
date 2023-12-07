@@ -17,7 +17,7 @@ internal class ClientShippingDataDbConfiguration : IEntityTypeConfiguration<Clie
             sa.HasOne(s => s.Country)
                 .WithMany()
                 .HasForeignKey(x => x.CountryName)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.ClientNoAction);
 
             sa.Property(s => s.MajorDivision).IsRequired().HasMaxLength(1000);
             sa.Property(s => s.MajorDivisionCode).HasMaxLength(100).HasDefaultValue(Address.NotApplicable);

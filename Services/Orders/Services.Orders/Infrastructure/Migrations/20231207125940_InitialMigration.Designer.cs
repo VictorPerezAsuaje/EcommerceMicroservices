@@ -12,7 +12,7 @@ using Services.Orders.Infrastructure;
 namespace Services.Orders.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderDbContext))]
-    [Migration("20231207001916_InitialMigration")]
+    [Migration("20231207125940_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -134,18 +134,14 @@ namespace Services.Orders.Infrastructure.Migrations
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CurrentOrderStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CurrentOrderStatusDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CurrentOrderStatusMessage")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CurrentOrderStatusId")
+                        .HasColumnType("int");
 
                     b.Property<string>("DiscountCode")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("HistoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
@@ -187,11 +183,65 @@ namespace Services.Orders.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CurrentOrderStatusId")
+                        .IsUnique();
+
+                    b.HasIndex("HistoryId")
+                        .IsUnique();
+
                     b.HasIndex("PaymentMethodName");
 
                     b.HasIndex("ShippingMethodName");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Services.Orders.Domain.OrderHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderHistory");
+                });
+
+            modelBuilder.Entity("Services.Orders.Domain.OrderHistoryItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ChangeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderHistoryId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderHistoryId");
+
+                    b.ToTable("OrderHistoryItems");
                 });
 
             modelBuilder.Entity("Services.Orders.Domain.OrderItem", b =>
@@ -229,35 +279,6 @@ namespace Services.Orders.Infrastructure.Migrations
                     b.HasKey("Alias");
 
                     b.ToTable("OrderStatus");
-                });
-
-            modelBuilder.Entity("Services.Orders.Domain.OrderStatusHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ChangeDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("OrderStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderHistories");
                 });
 
             modelBuilder.Entity("Services.Orders.Domain.PaymentMethod", b =>
@@ -300,7 +321,7 @@ namespace Services.Orders.Infrastructure.Migrations
                     b.HasOne("Services.Orders.Domain.Order", "Order")
                         .WithOne("DiscountCodeApplied")
                         .HasForeignKey("Services.Orders.Domain.ClientDiscountCode", "OrderId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
                     b.Navigation("DiscountCode");
@@ -389,7 +410,7 @@ namespace Services.Orders.Infrastructure.Migrations
                             b1.HasOne("Services.Orders.Domain.Country", "Country")
                                 .WithMany()
                                 .HasForeignKey("CountryName")
-                                .OnDelete(DeleteBehavior.SetNull)
+                                .OnDelete(DeleteBehavior.ClientNoAction)
                                 .IsRequired();
 
                             b1.Navigation("Country");
@@ -401,16 +422,28 @@ namespace Services.Orders.Infrastructure.Migrations
 
             modelBuilder.Entity("Services.Orders.Domain.Order", b =>
                 {
+                    b.HasOne("Services.Orders.Domain.OrderHistoryItem", "CurrentOrderStatus")
+                        .WithOne()
+                        .HasForeignKey("Services.Orders.Domain.Order", "CurrentOrderStatusId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.HasOne("Services.Orders.Domain.OrderHistory", "History")
+                        .WithOne("Order")
+                        .HasForeignKey("Services.Orders.Domain.Order", "HistoryId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
                     b.HasOne("Services.Orders.Domain.PaymentMethod", "PaymentMethod")
                         .WithMany()
                         .HasForeignKey("PaymentMethodName")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
                     b.HasOne("Services.Orders.Domain.ShippingMethod", "Shipping")
                         .WithMany()
                         .HasForeignKey("ShippingMethodName")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.OwnsOne("Services.Orders.Domain.Address", "ShippingAddress", b1 =>
                         {
@@ -488,7 +521,7 @@ namespace Services.Orders.Infrastructure.Migrations
                             b1.HasOne("Services.Orders.Domain.Country", "Country")
                                 .WithMany()
                                 .HasForeignKey("CountryName")
-                                .OnDelete(DeleteBehavior.SetNull)
+                                .OnDelete(DeleteBehavior.ClientNoAction)
                                 .IsRequired();
 
                             b1.WithOwner()
@@ -496,6 +529,10 @@ namespace Services.Orders.Infrastructure.Migrations
 
                             b1.Navigation("Country");
                         });
+
+                    b.Navigation("CurrentOrderStatus");
+
+                    b.Navigation("History");
 
                     b.Navigation("PaymentMethod");
 
@@ -505,23 +542,23 @@ namespace Services.Orders.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Services.Orders.Domain.OrderHistoryItem", b =>
+                {
+                    b.HasOne("Services.Orders.Domain.OrderHistory", "OrderHistory")
+                        .WithMany("Statuses")
+                        .HasForeignKey("OrderHistoryId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("OrderHistory");
+                });
+
             modelBuilder.Entity("Services.Orders.Domain.OrderItem", b =>
                 {
                     b.HasOne("Services.Orders.Domain.Order", "Order")
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("Services.Orders.Domain.OrderStatusHistory", b =>
-                {
-                    b.HasOne("Services.Orders.Domain.Order", "Order")
-                        .WithMany("StatusHistory")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -543,8 +580,14 @@ namespace Services.Orders.Infrastructure.Migrations
                     b.Navigation("DiscountCodeApplied");
 
                     b.Navigation("Items");
+                });
 
-                    b.Navigation("StatusHistory");
+            modelBuilder.Entity("Services.Orders.Domain.OrderHistory", b =>
+                {
+                    b.Navigation("Order")
+                        .IsRequired();
+
+                    b.Navigation("Statuses");
                 });
 #pragma warning restore 612, 618
         }

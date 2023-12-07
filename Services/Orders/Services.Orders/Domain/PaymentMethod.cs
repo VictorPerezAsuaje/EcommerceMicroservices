@@ -6,7 +6,9 @@ public class PaymentMethod
     public static PaymentMethod Stripe = new ("Stripe");
 
     public string Name { get; private set; }
-    protected PaymentMethod(string name)
+
+    protected PaymentMethod() { }
+    public PaymentMethod(string name)
     {
         Name = name;
     }

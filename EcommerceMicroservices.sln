@@ -33,13 +33,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Cart", "Services\C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Cart.Tests", "Services\Cart\Services.Cart.Tests\Services.Cart.Tests.csproj", "{B313712B-BD8F-40CA-95F6-ED60EFE4BE6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Orders", "Services\Orders\Services.Orders\Services.Orders.csproj", "{83849CD6-06B4-44A9-9662-41AEB573A1DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Orders", "Services\Orders\Services.Orders\Services.Orders.csproj", "{83849CD6-06B4-44A9-9662-41AEB573A1DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Orders.Tests", "Services\Orders\Services.Orders.Tests\Services.Orders.Tests.csproj", "{E670BCC5-34B8-4BB6-81A4-77032958629B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Orders.Tests", "Services\Orders\Services.Orders.Tests\Services.Orders.Tests.csproj", "{E670BCC5-34B8-4BB6-81A4-77032958629B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Inventory", "Services\Inventory\Services.Inventory\Services.Inventory.csproj", "{8A09FD0C-A287-4587-BFA9-2C9D269C1C38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Inventory", "Services\Inventory\Services.Inventory\Services.Inventory.csproj", "{8A09FD0C-A287-4587-BFA9-2C9D269C1C38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Inventory.Tests", "Services\Inventory\Services.Inventory.Tests\Services.Inventory.Tests.csproj", "{B0983CC3-4114-4979-8016-6F32EE656FB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Inventory.Tests", "Services\Inventory\Services.Inventory.Tests\Services.Inventory.Tests.csproj", "{B0983CC3-4114-4979-8016-6F32EE656FB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

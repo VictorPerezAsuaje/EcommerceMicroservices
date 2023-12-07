@@ -18,12 +18,11 @@ public class Order
 
     public List<OrderItem> Items { get; private set; } = new();
 
+    public int CurrentOrderStatusId { get; private set; }
+    public OrderHistoryItem CurrentOrderStatus { get; private set; }
 
-    public string CurrentOrderStatus { get; private set; }
-    public DateTime CurrentOrderStatusDate { get; private set; }
-    public string? CurrentOrderStatusMessage { get; private set; }
-
-    public List<OrderStatusHistory> StatusHistory { get; private set; } = new();
+    public int HistoryId { get; set; }
+    public OrderHistory History { get; set; }
 
     public double SubTotal { get; private set; }
     public double TaxApplied { get; private set; }
@@ -37,12 +36,12 @@ public class Order
     public PaymentMethod? PaymentMethod { get; private set; }
 
     protected Order() { }
-    public static Result<Order> Generate(Guid orderId, Guid clientId, string firstName, string lastName, Address shippingAddress, ShippingMethod shippingMethod, double shippingFees, List<OrderItem> items, double taxApplied = 0.0, DiscountCode? discountCode = null)
+    public static Result<Order> Generate(Guid orderId, Guid clientId, string firstName, string lastName, Address shippingAddress, ShippingMethod shippingMethod, List<OrderItem> items, PaymentMethod paymentMethod, double taxApplied = 0.0, DiscountCode? discountCode = null)
     {
         if(clientId == default)
             throw new ArgumentOutOfRangeException("clientId");
 
-        if (shippingFees < 0)
+        if (shippingMethod.ApplicableFees < 0)
             throw new ArgumentOutOfRangeException("shippingFees");
 
         if (items.Count == 0)
@@ -61,10 +60,12 @@ public class Order
         if (resultDiscount?.IsFailure ?? false)
             return Result.Fail<Order>(resultDiscount.Error);
 
-        double subtotal = items.Sum(x => x.Price * x.Amount);
-        double total = subtotal + subtotal * shippingFees - (subtotal * discountCode?.Value ?? 0.0) - subtotal * taxApplied;
+        double subtotal = Math.Round(items.Sum(x => x.Price * x.Amount), 2);
+        double total = Math.Round(subtotal + subtotal * shippingMethod.ApplicableFees - (subtotal * discountCode?.Value ?? 0.0) - subtotal * taxApplied, 2);
 
-        OrderStatusHistory firstDraft = new OrderStatusHistory(orderId, OrderStatus.Draft, "Order draft has been generated.");
+
+        OrderHistory history = new OrderHistory(orderId);
+        OrderHistoryItem firstDraft = history.AddNewStatus(OrderStatus.Draft, "Order draft has been generated.");
 
         return Result.Ok(new Order()
         {
@@ -72,30 +73,29 @@ public class Order
             ClientId = clientId,
             DiscountCode = discountCode?.Code,
             DiscountCodeApplied = resultDiscount?.Value,
-            CurrentOrderStatus = firstDraft.OrderStatus,
-            CurrentOrderStatusDate = firstDraft.ChangeDate,
-            CurrentOrderStatusMessage = firstDraft.Message,
-            StatusHistory = new List<OrderStatusHistory>() { firstDraft },
+            CurrentOrderStatus = firstDraft,
+            History = history,
             ShippingFirstName = firstName,
             ShippingLastName = lastName,
             ShippingAddress = shippingAddress,
             ShippingMethodName = shippingMethod.Name,
-            ShippingFees = shippingFees,
+            ShippingMethod = shippingMethod.Name,
+            ShippingFees = shippingMethod.ApplicableFees,
             Items = items,
             OrderDate = DateTime.UtcNow, 
+            PaymentMethodName = paymentMethod.Name,
             SubTotal = subtotal,
             TaxApplied = taxApplied,
             Total = total,
-        });
+        });     
     }
 
     #region State changes
 
     public Order CancelOrder(string? message = null)
     {
-        CurrentOrderStatus = OrderStatus.Cancelled.Name;
-        CurrentOrderStatusDate = DateTime.UtcNow;
-        CurrentOrderStatusMessage = message ?? "The cancel request has been applied.";
+        message = message ?? "The cancel request has been applied.";
+        CurrentOrderStatus = History.AddNewStatus(OrderStatus.Cancelled, message);         
         return this;
     }
 

@@ -10,9 +10,9 @@ public static class OrderExtensions
         => query.Select(order => new OrderGetDTO()
             {
                 Id = order.Id,
-                CurrentStatus = order.CurrentOrderStatus,
-                CurrentStatusChangeDate = order.CurrentOrderStatusDate,
-                CurrentStatusMessage = order.CurrentOrderStatusMessage ?? "",
+                CurrentStatus = order.CurrentOrderStatus.OrderStatus,
+                CurrentStatusChangeDate = order.CurrentOrderStatus.ChangeDate,
+                CurrentStatusMessage = order.CurrentOrderStatus.Message,
                 ShippingFirstName = order.ShippingFirstName,
                 ShippingLastName = order.ShippingLastName,
                 ShippingAddress = order.ShippingAddress.ToGetDTO(),
@@ -26,16 +26,13 @@ public static class OrderExtensions
             }
         );
 
-    public static OrderGetDTO ToGetDTO(this Order order)
-    {
-        OrderStatusHistory lastStatus = order.StatusHistory.OrderByDescending(x => x.ChangeDate).Single();
-
-        return new OrderGetDTO()
+    public static OrderGetDTO ToGetDTO(this Order order)    
+        => new OrderGetDTO()
         {
             Id = order.Id,
-            CurrentStatus = lastStatus.OrderStatus,
-            CurrentStatusChangeDate = lastStatus.ChangeDate,
-            CurrentStatusMessage = lastStatus.Message,
+            CurrentStatus = order.CurrentOrderStatus.OrderStatus,
+            CurrentStatusChangeDate = order.CurrentOrderStatus.ChangeDate,
+            CurrentStatusMessage = order.CurrentOrderStatus.Message,
             ShippingFirstName = order.ShippingFirstName,
             ShippingLastName = order.ShippingLastName,
             ShippingAddress = order.ShippingAddress.ToGetDTO(),
@@ -47,5 +44,5 @@ public static class OrderExtensions
             DiscountCodeApplied = order.DiscountCode,
             DiscountApplied = order.DiscountCodeApplied?.Value ?? 0.0
         };
-    }
+    
 }

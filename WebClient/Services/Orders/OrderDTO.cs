@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WebClient.Services.Cart;
 
 namespace WebClient.Services.Orders;
 
@@ -9,6 +8,7 @@ public class OrderDTO
     public Guid ClientId { get; set; }
 
     [Required]
+    [MinLength(1)]
     public List<OrderItemDTO> Items { get; set; } = new();
 
     [Required]
@@ -21,12 +21,11 @@ public class OrderDTO
     public AddressPostDTO ShippingAddress { get; set; }
 
     [Required]
-    public string ShippingMethod => Shipping.SelectedValue;
+    public string ShippingMethod => Shipping?.SelectedValue;
 
     [Required]
-    public string PaymentMethod => Payment.SelectedValue;
+    public string PaymentMethod => Payment?.SelectedValue;
 
-    public OrderCountryDTO Country { get; set; }
     public OrderShippingMethodDTO Shipping { get; set; }
     public OrderPaymentMethodDTO Payment { get; set; }
 

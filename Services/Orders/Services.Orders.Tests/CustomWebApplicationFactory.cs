@@ -17,7 +17,11 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         {
             services.RemoveAll(typeof(DbContextOptions<OrderDbContext>));
 
-            services.AddSqlServer<OrderDbContext>("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=EcomMicro_Orders_Tests;Trusted_Connection=true;");
+            services.AddDbContext<OrderDbContext>(opts =>
+            {
+                opts.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=EcomMicro_Orders_Tests;Trusted_Connection=true;");
+                opts.EnableSensitiveDataLogging();
+            });            
         });
 
         builder.UseEnvironment("Development");
@@ -32,6 +36,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
             if (dbContext.Database.GetPendingMigrations().Any())
             {
+                dbContext.ChangeTracker.Clear();
                 dbContext.Database.Migrate();
                 DbInitializer.SeedData(dbContext);
             }

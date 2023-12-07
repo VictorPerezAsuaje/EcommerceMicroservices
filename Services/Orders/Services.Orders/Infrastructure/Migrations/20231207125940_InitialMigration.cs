@@ -29,6 +29,19 @@ namespace Services.Orders.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OrderHistory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderHistory", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrderStatus",
                 columns: table => new
                 {
@@ -64,6 +77,28 @@ namespace Services.Orders.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OrderHistoryItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderHistoryId = table.Column<int>(type: "int", nullable: false),
+                    OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ChangeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderHistoryItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderHistoryItems_OrderHistory_OrderHistoryId",
+                        column: x => x.OrderHistoryId,
+                        principalTable: "OrderHistory",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ClientShippingData",
                 columns: table => new
                 {
@@ -91,8 +126,7 @@ namespace Services.Orders.Infrastructure.Migrations
                         name: "FK_ClientShippingData_ShippingCountries_ShippingAddress_CountryName",
                         column: x => x.ShippingAddress_CountryName,
                         principalTable: "ShippingCountries",
-                        principalColumn: "Name",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Name");
                 });
 
             migrationBuilder.CreateTable(
@@ -137,9 +171,8 @@ namespace Services.Orders.Infrastructure.Migrations
                     ShippingMethod = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ShippingFees = table.Column<double>(type: "float", maxLength: 2000, nullable: false),
                     DiscountCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CurrentOrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CurrentOrderStatusDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CurrentOrderStatusMessage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CurrentOrderStatusId = table.Column<int>(type: "int", nullable: false),
+                    HistoryId = table.Column<int>(type: "int", nullable: false),
                     SubTotal = table.Column<double>(type: "float", nullable: false),
                     TaxApplied = table.Column<double>(type: "float", nullable: false),
                     Total = table.Column<double>(type: "float", nullable: false),
@@ -151,6 +184,16 @@ namespace Services.Orders.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Orders_OrderHistoryItems_CurrentOrderStatusId",
+                        column: x => x.CurrentOrderStatusId,
+                        principalTable: "OrderHistoryItems",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Orders_OrderHistory_HistoryId",
+                        column: x => x.HistoryId,
+                        principalTable: "OrderHistory",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Orders_PaymentMethods_PaymentMethodName",
                         column: x => x.PaymentMethodName,
                         principalTable: "PaymentMethods",
@@ -159,8 +202,7 @@ namespace Services.Orders.Infrastructure.Migrations
                         name: "FK_Orders_ShippingCountries_ShippingAddress_CountryName",
                         column: x => x.ShippingAddress_CountryName,
                         principalTable: "ShippingCountries",
-                        principalColumn: "Name",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Name");
                     table.ForeignKey(
                         name: "FK_Orders_ShippingMethods_ShippingMethodName",
                         column: x => x.ShippingMethodName,
@@ -192,30 +234,7 @@ namespace Services.Orders.Infrastructure.Migrations
                         name: "FK_ClientDiscountCodes_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OrderHistories",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ChangeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OrderHistories", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OrderHistories_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -256,9 +275,21 @@ namespace Services.Orders.Infrastructure.Migrations
                 column: "ShippingAddress_CountryName");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderHistories_OrderId",
-                table: "OrderHistories",
-                column: "OrderId");
+                name: "IX_OrderHistoryItems_OrderHistoryId",
+                table: "OrderHistoryItems",
+                column: "OrderHistoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_CurrentOrderStatusId",
+                table: "Orders",
+                column: "CurrentOrderStatusId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_HistoryId",
+                table: "Orders",
+                column: "HistoryId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_PaymentMethodName",
@@ -291,9 +322,6 @@ namespace Services.Orders.Infrastructure.Migrations
                 name: "ClientShippingData");
 
             migrationBuilder.DropTable(
-                name: "OrderHistories");
-
-            migrationBuilder.DropTable(
                 name: "OrderItem");
 
             migrationBuilder.DropTable(
@@ -306,10 +334,16 @@ namespace Services.Orders.Infrastructure.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
+                name: "OrderHistoryItems");
+
+            migrationBuilder.DropTable(
                 name: "PaymentMethods");
 
             migrationBuilder.DropTable(
                 name: "ShippingMethods");
+
+            migrationBuilder.DropTable(
+                name: "OrderHistory");
 
             migrationBuilder.DropTable(
                 name: "ShippingCountries");

@@ -25,6 +25,11 @@ public class OrderService : IOrderService
     {
         Guid newOrderId = Guid.NewGuid();
 
+        bool isSupportedCountry = await _context.ShippingCountries.AnyAsync(x => x.Name == dto.ShippingAddress.CountryName && x.Code == dto.ShippingAddress.CountryCode);
+
+        if (!isSupportedCountry)
+            return Result.Fail<Guid>("The order could not be created because the country selected is not supported in our system.");
+
         Result<Address> addressResult = dto.ShippingAddress.ToAddress();
 
         if (addressResult.IsFailure)
@@ -39,12 +44,25 @@ public class OrderService : IOrderService
         if (shippingMethod is null)
             return Result.Fail<Guid>("Order could not be created, selected shipping method could not be found for that country.");
 
-        DiscountCode? discount = await _context.DiscountCodes
-            .Where(x => x.Code == dto.DiscountCodeApplied)
+        DiscountCode? discount = null;
+        
+        if(dto.DiscountCodeApplied != null)
+        {
+            discount = await _context.DiscountCodes
+                .Where(x => x.Code == dto.DiscountCodeApplied)
+                .SingleOrDefaultAsync();
+
+            if (discount is null)
+                return Result.Fail<Guid>("Order could not be created, selected discount could not be found.");
+        }
+        
+
+        PaymentMethod? paymentMethod = await _context.PaymentMethods
+            .Where(x => x.Name == dto.PaymentMethod)
             .SingleOrDefaultAsync();
 
-        if (discount is null)
-            return Result.Fail<Guid>("Order could not be created, selected discount could not be found.");
+        if (paymentMethod is null)
+            return Result.Fail<Guid>("Order could not be created, selected payment method could not be found.");
 
         Result<Order> orderResult = Order.Generate
             (
@@ -54,8 +72,8 @@ public class OrderService : IOrderService
                 lastName: dto.ShippingLastName,
                 shippingAddress: address,
                 shippingMethod: shippingMethod,
-                shippingFees: shippingMethod.ApplicableFees,
                 items: dto.Items.ToListOrderItem(newOrderId),
+                paymentMethod: paymentMethod,
                 taxApplied: 0.0,
                 discountCode: discount
             );
@@ -70,7 +88,7 @@ public class OrderService : IOrderService
 
     public async Task<Result> CancelOrderAsync(Guid id)
     {
-        Order? order = await _context.Orders.Where(x => x.Id == id).FirstOrDefaultAsync();
+        Order? order = await _context.Orders.Where(x => x.Id == id).Include(x => x.History).FirstOrDefaultAsync();
 
         if (order is null)
             return Result.Fail("The selected order to cancel does not exist.");
@@ -82,12 +100,18 @@ public class OrderService : IOrderService
     }
 
     public async Task<Result<List<OrderGetDTO>>> GetAllAsync()
-        => Result.Ok(await _context.Orders.ToQueryableGetDTO().ToListAsync());
+        => Result.Ok(
+            await _context.Orders
+            .AsNoTracking()
+            .ToQueryableGetDTO()
+            .ToListAsync()
+        );
 
     public async Task<Result<OrderGetDTO>> GetByIdAsync(Guid id)
     {
         OrderGetDTO? order = await _context.Orders
                                     .Where(x => x.Id == id)
+                                    .AsNoTracking()
                                     .ToQueryableGetDTO()
                                     .FirstOrDefaultAsync();
 
