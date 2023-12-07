@@ -115,7 +115,7 @@ public class CartControllerTests : IClassFixture<CustomWebApplicationFactory>
             name: item.Name,
             price: item.Price,
             amount: item.Amount
-        ).ApplyDiscount(item.DiscountApplied);
+        );
 
         transformedItem.Should().BeEquivalentTo(
             new CartItem(
@@ -125,8 +125,7 @@ public class CartControllerTests : IClassFixture<CustomWebApplicationFactory>
                 name: dto.Name,
                 price: dto.Price,
                 amount: dto.Amount
-            )
-            .ApplyDiscount(dto.DiscountApplied)          
+            )         
         );
     }
 
@@ -185,8 +184,7 @@ public class CartControllerTests : IClassFixture<CustomWebApplicationFactory>
             ThumbnailUrl = DbInitializer.CartItems[0].ThumbnailUrl,
             Name = DbInitializer.CartItems[0].Name,
             Price = DbInitializer.CartItems[0].Price,
-            Amount = DbInitializer.CartItems[0].Amount,
-            DiscountApplied = DbInitializer.CartItems[0].DiscountApplied
+            Amount = DbInitializer.CartItems[0].Amount
         };
 
         // Act
@@ -222,8 +220,7 @@ public class CartControllerTests : IClassFixture<CustomWebApplicationFactory>
             ThumbnailUrl = DbInitializer.CartItems[0].ThumbnailUrl,
             Name = DbInitializer.CartItems[0].Name,
             Price = DbInitializer.CartItems[0].Price,
-            Amount = DbInitializer.CartItems[0].Amount,
-            DiscountApplied = DbInitializer.CartItems[0].DiscountApplied
+            Amount = DbInitializer.CartItems[0].Amount
         };
 
         // Act
@@ -290,7 +287,7 @@ public class CartControllerTests : IClassFixture<CustomWebApplicationFactory>
                 name: item.Name,
                 price: item.Price,
                 amount: item.Amount
-            ).ApplyDiscount(item.DiscountApplied)
+            )
         ).Should().BeEquivalentTo(expectedOutputClientOne);
         itemsOnClientTwo.Should().BeEmpty();
     }

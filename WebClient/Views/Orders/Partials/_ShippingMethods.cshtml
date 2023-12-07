@@ -1,5 +1,5 @@
 ﻿@using WebClient.Services.Orders
-@model OrderShippingMethodPostDTO
+@model OrderShippingMethodDTO
 
 @Html.ValidationMessageFor(x => x.SelectedValue, "", new { @class = "validation-message text-rose-600" })
 @foreach (var shippingMethod in Model.AvailableShippings)

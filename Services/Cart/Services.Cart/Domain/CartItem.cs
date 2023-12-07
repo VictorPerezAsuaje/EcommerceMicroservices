@@ -10,9 +10,8 @@ public class CartItem
     public string Name { get; private set; }
     public double Price { get; private set; }
     public int Amount { get; private set; }
-    public double DiscountApplied { get; private set; } = 0;
-    public double ComputedPrice => Price * Amount - (Price * Amount * DiscountApplied);
-    public bool IsFree => DiscountApplied == 1 || Price == 0;
+    public double ComputedPrice => Price * Amount;
+    public bool IsFree => Price == 0;
     public DateTime? ExpirationTime { get; private set; }
 
     protected CartItem() { /* EF */}
@@ -36,16 +35,6 @@ public class CartItem
     public CartItem RenewExpirationTime()
     {
         ExpirationTime = ExpirationTime is null ? DateTime.UtcNow : DateTime.UtcNow.AddMonths(1);
-        return this;
-    }
-
-    public CartItem ApplyDiscount(double discount)
-    {
-        if (discount < 0) discount = 0;
-        if (discount > 1) discount = 1;
-
-        DiscountApplied = discount;
-
         return this;
     }
 

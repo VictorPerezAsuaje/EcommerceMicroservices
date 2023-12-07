@@ -33,9 +33,6 @@ namespace Services.Cart.Infrastructure.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<double>("DiscountApplied")
-                        .HasColumnType("float");
-
                     b.Property<DateTime?>("ExpirationTime")
                         .HasColumnType("datetime2");
 

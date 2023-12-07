@@ -51,18 +51,7 @@
     <div class="flex flex-row justify-between items-center">
         <span>Total: </span>
         <span class="font-bold text-lg">
-            @if (Model.HasDiscounts)
-            {
-                <span class="line-through text-rose-600">@Model.Total.ToString("c")</span>
-
-                <span class="flex items-center bg-rose-600 text-white text-xs rounded-lg font-bold h-6 px-1">
-                    @Model.Total.ToString("c")
-                </span>
-            }
-            else
-            {
-                <span>@Model.Total.ToString("c")</span>
-            }
+            <span>@Model.Total.ToString("c")</span>
         </span>
     </div>
    

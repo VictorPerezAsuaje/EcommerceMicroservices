@@ -6,8 +6,7 @@ namespace Services.Cart.Application;
 public static class CartItemExtensions
 {
     public static CartItem ToCartItem(this CartItemPostDTO dto, Guid clientId)
-        => new CartItem(clientId, dto.ProductId, dto.ThumbnailUrl, dto.Name, dto.Price, dto.Amount)
-                    .ApplyDiscount(dto.DiscountApplied);
+        => new CartItem(clientId, dto.ProductId, dto.ThumbnailUrl, dto.Name, dto.Price, dto.Amount);
 
     public static List<CartItemGetDTO> ToListGetDTO(this IEnumerable<CartItem> CartItems)
         => CartItems.Select(ToGetDTO).ToList();
@@ -20,7 +19,6 @@ public static class CartItemExtensions
             Price = x.Price,
             ThumbnailUrl = x.ThumbnailUrl,
             Amount = x.Amount,
-            DiscountApplied = x.DiscountApplied,
             ComputedPrice = x.ComputedPrice,
             IsFree = x.IsFree
         });
@@ -33,7 +31,6 @@ public static class CartItemExtensions
             Price = cartItem.Price,
             ThumbnailUrl = cartItem.ThumbnailUrl,
             Amount = cartItem.Amount,
-            DiscountApplied = cartItem.DiscountApplied,
             ComputedPrice = cartItem.ComputedPrice,
             IsFree = cartItem.IsFree
         };

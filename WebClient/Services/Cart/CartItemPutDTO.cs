@@ -12,7 +12,4 @@ public class CartItemPutDTO
 
     [Range(0, int.MaxValue)]
     public int? Amount { get; set; } = null;
-
-    [Range(0, 1)]
-    public double DiscountApplied { get; set; } = 0;
 }

@@ -14,8 +14,6 @@ public class CartItemGetDTO
     [Range(0, int.MaxValue)]
     public int Amount { get; set; }
 
-    [Range(0, 1)]
-    public int DiscountApplied { get; set; } = 0;
-    public double ComputedPrice => Price * Amount - (Price * Amount * DiscountApplied);
-    public bool IsFree => DiscountApplied == 1 || Price == 0;
+    public double ComputedPrice => Price * Amount;
+    public bool IsFree => Price == 0;
 }

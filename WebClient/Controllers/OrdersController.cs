@@ -38,7 +38,7 @@ public class OrdersController : Controller
     [HttpGet("available-countries")]
     public async Task<IActionResult> AvailableCountries(string? selected = null)
     {
-        OrderCountryPostDTO dto = new OrderCountryPostDTO()
+        OrderCountryDTO dto = new OrderCountryDTO()
         {
             SelectedValue = selected,
             AvailableCountries = StaticOrderData.Countries
@@ -51,7 +51,7 @@ public class OrdersController : Controller
     [HttpGet("payment-methods")]
     public async Task<IActionResult> PaymentMethods(string? selected = null)
     {
-        OrderPaymentMethodPostDTO dto = new OrderPaymentMethodPostDTO()
+        OrderPaymentMethodDTO dto = new OrderPaymentMethodDTO()
         {
             SelectedValue = selected,
             AvailablePayments = StaticOrderData.PaymentMethods
@@ -64,7 +64,7 @@ public class OrdersController : Controller
     [HttpGet("shipping-methods")]
     public async Task<IActionResult> ShippingMethods(string? selected = null)
     {
-        OrderShippingMethodPostDTO dto = new OrderShippingMethodPostDTO()
+        OrderShippingMethodDTO dto = new OrderShippingMethodDTO()
         {
             SelectedValue = selected,
             AvailableShippings = StaticOrderData.ShippingMethods
@@ -90,7 +90,7 @@ public class OrdersController : Controller
             return RedirectToAction("Login", "Home");
         }
 
-        OrderPostDTO order = new OrderPostDTO();
+        OrderDTO order = new OrderDTO();
 
         try
         {
@@ -124,7 +124,7 @@ public class OrdersController : Controller
 
     [HttpPost("PlaceOrder")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> PlaceOrder(OrderPostDTO order)
+    public async Task<IActionResult> PlaceOrder(OrderDTO order)
     {
         try
         {

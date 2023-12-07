@@ -18,7 +18,4 @@ public class CartItemPostDTO
 
     [Required]
     public int Amount { get; set; }
-
-    [Range(0, 1)]
-    public double DiscountApplied { get; set; } = 0;
 }

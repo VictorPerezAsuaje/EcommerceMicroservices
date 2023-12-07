@@ -13,8 +13,6 @@ public static class OrderItemExtensions
             ProductId = cartItem.ProductId,
             Name = cartItem.Name,
             Price = cartItem.Price,
-            Amount = cartItem.Amount,
-            DiscountApplied = cartItem.DiscountApplied,
-            
+            Amount = cartItem.Amount           
         };
 }

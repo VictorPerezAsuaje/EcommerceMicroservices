@@ -14,6 +14,5 @@ internal class CartItemDbConfiguration : IEntityTypeConfiguration<CartItem>
         builder.Property(x => x.Name).IsRequired().HasMaxLength(500);
         builder.Property(x => x.Price).IsRequired();
         builder.Property(x => x.Amount).IsRequired();
-        builder.Property(x => x.DiscountApplied).IsRequired();
     }
 }

@@ -1,5 +1,5 @@
 ﻿@using WebClient.Services.Orders
-@model OrderPostDTO
+@model OrderDTO
 
 @{
     Layout = "_OrderLayout";
@@ -23,7 +23,6 @@
                 <input value="@item.Name" name="Items[@i].Name" hidden />
                 <input value="@item.Price" name="Items[@i].Price" hidden />
                 <input value="@item.Amount" name="Items[@i].Amount" hidden />
-                <input value="@item.DiscountApplied" name="Items[@i].DiscountApplied" hidden />
 
                 <div class="flex flex-row justify-between gap-4 mb-4">
                     <div class="flex flex-row gap-4">
@@ -84,7 +83,7 @@
                     <span class="font-bold text-lg">@Model.Total.ToString("c")</span>
                 </div>
 
-                <button type="submit" class="bg-zuccini-700 text-white font-medium p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 cursor-pointer" onclick="return orderFormValid()">COMPLETE PAYMENT</button>
+                <button type="submit" class="bg-zuccini-700 text-white font-medium p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 cursor-pointer" onclick="return orderFormValid()">CONTINUE TO PAYMENT</button>
             </footer>
         </div>
         <div class="flex-[6]">
