@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Services.Orders.Application.Orders;
+namespace WebClient.Services.Orders.ApiDTOS;
 
-public class OrderPostDTO 
+
+public class OrderPostDTO
 {
     [Required]
     public Guid ClientId { get; set; }
@@ -28,5 +29,4 @@ public class OrderPostDTO
 
     public bool SaveShippingData { get; set; } = false;
     public string? DiscountCodeApplied { get; set; } = null;
-
 }

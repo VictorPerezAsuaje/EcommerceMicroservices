@@ -29,7 +29,7 @@ public class ProductService : IProductService
             EndpointType = EndpointType.POST,
             Url = _catalogOptions.BaseUrl + "/products",
             Data = dto
-        });
+        }, false);
     }
 
     public async Task<ResponseDTO> DeleteAsync(Guid productId)
@@ -43,7 +43,7 @@ public class ProductService : IProductService
         {
             EndpointType = EndpointType.GET,
             Url = _catalogOptions.BaseUrl + "/products"
-        });
+        }, false);
     }
 
     public async Task<ResponseDTO<ProductGetDTO>> GetByIdAsync(Guid id)
@@ -52,7 +52,7 @@ public class ProductService : IProductService
         {
             EndpointType = EndpointType.GET,
             Url = _catalogOptions.BaseUrl + "/products/" + id.ToString()
-        });
+        }, false);
     }
 
     public async Task<ResponseDTO> UpdateAsync(Guid productId, ProductPutDTO dto)

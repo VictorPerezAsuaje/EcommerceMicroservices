@@ -412,7 +412,7 @@ public class OrderControllerTests : IClassFixture<CustomWebApplicationFactory>
         Guid id = DbInitializer.Orders[1].Id;
 
         // Act
-        var result = await _client.PutAsync("/orders/" + id, null);
+        var result = await _client.PutAsync("/orders/" + id + "/cancel", null);
 
         // Assert
         result.EnsureSuccessStatusCode();
@@ -451,7 +451,7 @@ public class OrderControllerTests : IClassFixture<CustomWebApplicationFactory>
         Guid id = Guid.NewGuid();
 
         // Act
-        var result = await _client.PutAsync("/orders/" + id, null);
+        var result = await _client.PutAsync("/orders/" + id + "/cancel", null);
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);

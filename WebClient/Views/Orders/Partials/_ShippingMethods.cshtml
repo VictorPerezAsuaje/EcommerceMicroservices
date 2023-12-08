@@ -1,7 +1,7 @@
-﻿@using WebClient.Services.Orders
-@model OrderShippingMethodDTO
+﻿@using WebClient.Services.Orders.ViewModels
+@model OrderShippingMethodVM
 
-@Html.ValidationMessageFor(x => x.SelectedValue, "", new { @class = "validation-message text-rose-600" })
+@Html.RedValidationMessage(x => x.SelectedValue, "Shipping.SelectedValue")
 @foreach (var shippingMethod in Model.AvailableShippings)
 {
     <label class="flex items-center gap-4 w-full border border-gray-nurse-100 p-4">

@@ -1,6 +1,6 @@
-﻿namespace WebClient.Services.Orders;
+﻿namespace WebClient.Services.Orders.ViewModels;
 
-public class OrderItemDTO
+public class OrderItemVM
 {
     public Guid ProductId { get; set; }
     public string Name { get; set; }

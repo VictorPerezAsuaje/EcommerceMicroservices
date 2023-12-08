@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebClient.Services.Orders;
+namespace WebClient.Services.Orders.ApiDTOS;
 
 public class AddressPostDTO
 {
     [Required]
-    public string CountryName => Country?.SelectedValue;
+    public string CountryName { get; set; }
 
     [Required]
     public string CountryCode { get; set; }
@@ -32,7 +32,4 @@ public class AddressPostDTO
     [Range(-90, 90, ErrorMessage = "Longitude ranges from -90 to 90")]
     public double Longitude { get; set; }
     public string? ExtraDetails { get; set; }
-
-    public OrderCountryDTO Country { get; set; }
-
 }

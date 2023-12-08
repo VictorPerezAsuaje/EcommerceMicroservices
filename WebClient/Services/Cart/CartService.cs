@@ -29,7 +29,7 @@ public class CartService : ICartService
             EndpointType = EndpointType.POST,
             Url = _cartOptions.BaseUrl + "/cart/" + clientId,
             Data = dto
-        });
+        }, false);
     }
 
     public async Task<ResponseDTO<List<CartItemGetDTO>>> GetCartByClientIdAsync(Guid clientId)
@@ -38,7 +38,7 @@ public class CartService : ICartService
         {
             EndpointType = EndpointType.GET,
             Url = _cartOptions.BaseUrl + "/cart/" + clientId,
-        });
+        }, false);
     }
 
     public async Task<ResponseDTO> RemoveCartItemAsync(Guid clientId, Guid productId)
@@ -47,7 +47,7 @@ public class CartService : ICartService
         {
             EndpointType = EndpointType.DELETE,
             Url = _cartOptions.BaseUrl + "/cart/" + clientId + "/" + productId
-        });
+        }, false);
     }
 
     public async Task<ResponseDTO> TransferCartItemsAsync(Guid fromId, Guid toId)
@@ -56,7 +56,7 @@ public class CartService : ICartService
         {
             EndpointType = EndpointType.PUT,
             Url = _cartOptions.BaseUrl + "/cart/" + fromId + "/transfer-to/" + toId
-        });
+        }, false);
     }
 
     public async Task<ResponseDTO> UpdateCartItemAsync(Guid clientId, Guid productId, CartItemPutDTO dto)
@@ -66,6 +66,6 @@ public class CartService : ICartService
             EndpointType = EndpointType.PUT,
             Url = _cartOptions.BaseUrl + "/cart/" + clientId + "/" + productId,
             Data = dto
-        });
+        }, false);
     }
 }

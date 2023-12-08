@@ -29,7 +29,7 @@ public class TagService : ITagService
             EndpointType = EndpointType.POST,
             Url = _catalogOptions.BaseUrl + "/tags",
             Data = dto
-        });
+        }, false);
     }
 
     public async Task<ResponseDTO> DeleteAsync(string name)
@@ -43,7 +43,7 @@ public class TagService : ITagService
         {
             EndpointType = EndpointType.GET,
             Url = _catalogOptions.BaseUrl + "/tags"
-        });        
+        }, false);        
     }
 
     public async Task<ResponseDTO<TagGetDTO>> GetByNameAsync(string name)

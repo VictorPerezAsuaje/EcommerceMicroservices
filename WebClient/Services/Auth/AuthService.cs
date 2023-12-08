@@ -28,7 +28,7 @@ public class AuthService : IAuthService
             EndpointType = EndpointType.POST,
             Url = _authOptions.BaseUrl + "/auth/login",
             Data = dto
-        });
+        }, false);
     }
 
     public async Task<ResponseDTO> RecoverPasswordAsync(ForgotPasswordPostDTO dto)
@@ -43,6 +43,6 @@ public class AuthService : IAuthService
             EndpointType = EndpointType.POST,
             Url = _authOptions.BaseUrl + "/auth/register",
             Data = dto
-        });
+        }, false);
     }
 }

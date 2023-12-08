@@ -1,7 +1,7 @@
-﻿@using WebClient.Services.Orders
-@model OrderCountryDTO
+﻿@using WebClient.Services.Orders.ViewModels
+@model OrderCountryVM
 
-@Html.ValidationMessageFor(x => x.SelectedValue, "", new { @class = "validation-message text-rose-600" })
+@Html.RedValidationMessage(x => x.SelectedValue, "ShippingAddress.Country.SelectedValue")
 <select asp-for="SelectedValue" name="ShippingAddress.Country.SelectedValue" class="w-full border border-gray-nurse-100 p-2 mb-4">
     <option value="">Select your country...</option>
     @foreach (var country in Model.AvailableCountries)

@@ -6,6 +6,7 @@ using WebClient.Services.Cart;
 using WebClient.Services.Catalog.Categories;
 using WebClient.Services.Catalog.Products;
 using WebClient.Services.Catalog.Tags;
+using WebClient.Services.Order;
 using WebClient.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +38,10 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 // CartService
 builder.Services.AddScoped<ICartService, CartService>();
+
+// CartService
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 
 var app = builder.Build();
 

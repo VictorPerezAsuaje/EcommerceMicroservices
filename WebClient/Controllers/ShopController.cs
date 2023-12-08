@@ -106,7 +106,7 @@ public class ShopController : Controller
         {
             this.InvokeNotification(x =>
             {
-                x.Title = "Error loading tags";
+                x.Title = "Error loading shop data";
                 x.Message = "There was an error trying to load the page.";
                 x.Icon = NotificationIcon.error;
             });
@@ -126,7 +126,7 @@ public class ShopController : Controller
             {
                 this.InvokeNotification(x =>
                 {
-                    x.Title = "Error loading tags";
+                    x.Title = "Error loading products";
                     x.Message = "There was an error trying to retrieve the product list.";
                     x.Icon = NotificationIcon.error;
                 });

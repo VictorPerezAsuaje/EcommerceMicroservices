@@ -1,44 +1,47 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebClient.Models;
 using WebClient.Services.Cart;
-using WebClient.Services.Orders;
+using WebClient.Services.Order;
+using WebClient.Services.Orders.ViewModels;
 using WebClient.Utilities;
 
 namespace WebClient.Controllers;
 
 public static class StaticOrderData
 {
-    public static List<ShippingMethodDTO> ShippingMethods => new()
+    public static List<ShippingMethodVM> ShippingMethods => new()
     {
-        new ShippingMethodDTO { Name = "FedEx" },
-        new ShippingMethodDTO { Name = "MRW" },
-        new ShippingMethodDTO { Name = "Nacex" },
-        new ShippingMethodDTO { Name = "Correos" }
+        new ShippingMethodVM { Name = "FedEx" },
+        new ShippingMethodVM { Name = "MRW" },
+        new ShippingMethodVM { Name = "Nacex" },
+        new ShippingMethodVM { Name = "Correos" }
     };
 
-    public static List<PaymentMethodDTO> PaymentMethods => new()
+    public static List<PaymentMethodVM> PaymentMethods => new()
     {
-        new PaymentMethodDTO { Name = "Paypal" },
-        new PaymentMethodDTO { Name = "Stripe" }
+        new PaymentMethodVM { Name = "Paypal" },
+        new PaymentMethodVM { Name = "Stripe" }
     };
 
-    public static List<CountryDTO> Countries => new() { new() { Name = "Spain" } };
+    public static List<CountryVM> Countries => new() { new() { Name = "Spain" } };
 }
 
 [Route("orders")]
 public class OrdersController : Controller
 {
     ICartService _cartService;
+    IOrderService _orderService;
 
-    public OrdersController(ICartService cartService)
+    public OrdersController(ICartService cartService, IOrderService orderService)
     {
         _cartService = cartService;
+        _orderService = orderService;
     }
 
     [HttpGet("available-countries")]
     public async Task<IActionResult> AvailableCountries(string? selected = null)
     {
-        OrderCountryDTO dto = new OrderCountryDTO()
+        OrderCountryVM dto = new OrderCountryVM()
         {
             SelectedValue = selected,
             AvailableCountries = StaticOrderData.Countries
@@ -51,7 +54,7 @@ public class OrdersController : Controller
     [HttpGet("payment-methods")]
     public async Task<IActionResult> PaymentMethods(string? selected = null)
     {
-        OrderPaymentMethodDTO dto = new OrderPaymentMethodDTO()
+        OrderPaymentMethodVM dto = new OrderPaymentMethodVM()
         {
             SelectedValue = selected,
             AvailablePayments = StaticOrderData.PaymentMethods
@@ -64,7 +67,7 @@ public class OrdersController : Controller
     [HttpGet("shipping-methods")]
     public async Task<IActionResult> ShippingMethods(string? selected = null)
     {
-        OrderShippingMethodDTO dto = new OrderShippingMethodDTO()
+        OrderShippingMethodVM dto = new OrderShippingMethodVM()
         {
             SelectedValue = selected,
             AvailableShippings = StaticOrderData.ShippingMethods
@@ -90,7 +93,7 @@ public class OrdersController : Controller
             return RedirectToAction("Login", "Home");
         }
 
-        OrderDTO order = new OrderDTO();
+        OrderVM order = new OrderVM();
 
         try
         {
@@ -124,7 +127,7 @@ public class OrdersController : Controller
 
     [HttpPost("PlaceOrder")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> PlaceOrder(OrderDTO order)
+    public async Task<IActionResult> PlaceOrder(OrderVM order)
     {
         try
         {
@@ -139,6 +142,34 @@ public class OrdersController : Controller
                 
                 return View(order);
             }
+
+            string? guid = null;
+            Request.Cookies.TryGetValue("SessionId", out guid);
+
+            if (!Guid.TryParse(guid, out Guid clientId))
+                return RedirectToAction("Index", "Home");
+
+            order.ClientId = clientId;
+            var result = await _orderService.PlaceOrderAsync(clientId, order.ToOrderPostDTO());
+
+            if (result.IsFailure)
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Order error";
+                    x.Message = result.Error;
+                    x.Icon = NotificationIcon.error;
+                });
+
+                return View(order);
+            }
+
+            this.InvokeNotification(x =>
+            {
+                x.Title = "Order completed successfully";
+                x.Icon = NotificationIcon.success;
+            });
+            return RedirectToAction("Index", "Home");
         }
         catch (Exception ex)
         {
@@ -150,13 +181,6 @@ public class OrdersController : Controller
             });
 
             return View(order);
-        }
-
-        this.InvokeNotification(x =>
-        {
-            x.Title = "Order completed successfully";
-            x.Icon = NotificationIcon.success;
-        });
-        return RedirectToAction("Index", "Home");
+        }        
     }
 }

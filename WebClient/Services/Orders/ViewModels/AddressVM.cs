@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Services.Orders.Application.Orders;
+namespace WebClient.Services.Orders.ViewModels;
 
-public class AddressPostDTO : IValidatableObject
+public class AddressVM : IValidatableObject
 {
     [Required]
-    public string CountryName { get; set; }
+    public string CountryName => Country?.SelectedValue;
 
     [Required]
-    public string CountryCode { get; set; }
+    public string CountryCode { get; set; } = "ES";
 
     [Required]
     public string MajorDivision { get; set; }
@@ -25,11 +25,16 @@ public class AddressPostDTO : IValidatableObject
     public string? PostalCode { get; set; }
 
     [Required]
-    public double Latitude { get; set; }
+    public double Latitude => double.TryParse(Pre_Latitude, out double latitude) ? latitude : double.MinValue;
+    public string Pre_Latitude { get; set; }
 
     [Required]
-    public double Longitude { get; set; }
+    public double Longitude => double.TryParse(Pre_Longitude, out double longitude) ? longitude : double.MinValue;
+    public string Pre_Longitude { get; set; }
+
     public string? ExtraDetails { get; set; }
+
+    public OrderCountryVM Country { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -39,5 +44,5 @@ public class AddressPostDTO : IValidatableObject
         if (Latitude > 90 || Latitude < -90)
             yield return new ValidationResult("Latitude ranges from -90 to 90");
     }
-}
 
+}

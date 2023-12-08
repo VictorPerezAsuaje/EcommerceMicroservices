@@ -1,7 +1,7 @@
-﻿@using WebClient.Services.Orders
-@model OrderPaymentMethodDTO
+﻿@using WebClient.Services.Orders.ViewModels
+@model OrderPaymentMethodVM
 
-@Html.ValidationMessageFor(x => x.SelectedValue, "", new { @class = "validation-message text-rose-600" })
+@Html.RedValidationMessage(x => x.SelectedValue, "Payment.SelectedValue")
 @foreach (var paymentMethod in Model.AvailablePayments)
 {
     <label class="flex items-center gap-4 w-full border border-gray-nurse-100 p-4">

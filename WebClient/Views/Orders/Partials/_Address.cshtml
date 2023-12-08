@@ -1,38 +1,37 @@
-﻿@using WebClient.Services.Orders
-@model AddressPostDTO
+﻿@using WebClient.Services.Orders.ViewModels
+@model AddressVM
 
 
-@Html.ValidationMessageFor(x => x.CountryName, "", new { @class = "validation-message text-rose-600" })
 <select class="w-full border border-gray-nurse-100 p-2 mb-4" hx-get="/orders/available-countries?selected=@Model?.Country?.SelectedValue" hx-trigger="load delay:200ms" hx-swap="outerHTML" name="ShippingAddress.CountryName">
     <option value="">Select your country...</option>
 </select>
 
-@Html.ValidationMessageFor(x => x.MajorDivision, "", new { @class = "validation-message text-rose-600" })
-<input asp-for="MajorDivision" name="ShippingAddress.MajorDivision" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="State, province, oblast, etc..." />
+@Html.RedValidationMessage(x => x.MajorDivision, "ShippingAddress.MajorDivision")
+<input asp-for="MajorDivision" name="ShippingAddress.MajorDivision" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="State, province, oblast, etc..." form="orderForm" />
 
-@Html.ValidationMessageFor(x => x.Locality, "", new { @class = "validation-message text-rose-600" })
+@Html.RedValidationMessage(x => x.Locality, "ShippingAddress.Locality")
 <input asp-for="Locality" name="ShippingAddress.Locality" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="City, Town, Village, etc..." />
 
-@Html.ValidationMessageFor(x => x.MinorDivision, "", new { @class = "validation-message text-rose-600" })
+@Html.RedValidationMessage(x => x.MinorDivision, "ShippingAddress.MinorDivision")
 <input asp-for="MinorDivision" name="ShippingAddress.MinorDivision" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="City area, district, etc..." />
 
-@Html.ValidationMessageFor(x => x.Street, "", new { @class = "validation-message text-rose-600" })
+@Html.RedValidationMessage(x => x.Street, "ShippingAddress.Street")
 <input asp-for="Street" name="ShippingAddress.Street" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Street" />
 
-@Html.ValidationMessageFor(x => x.StreetNumber, "", new { @class = "validation-message text-rose-600" })
+@Html.RedValidationMessage(x => x.StreetNumber, "ShippingAddress.StreetNumber")
 <input asp-for="StreetNumber" name="ShippingAddress.StreetNumber" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Street number" />
 
-@Html.ValidationMessageFor(x => x.HouseNumber, "", new { @class = "validation-message text-rose-600" })
+@Html.RedValidationMessage(x => x.HouseNumber, "ShippingAddress.HouseNumber")
 <input asp-for="HouseNumber" name="ShippingAddress.MajorDivision" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="House number" />
 
-@Html.ValidationMessageFor(x => x.PostalCode, "", new { @class = "validation-message text-rose-600" })
+@Html.RedValidationMessage(x => x.PostalCode, "ShippingAddress.PostalCode")
 <input asp-for="PostalCode" name="ShippingAddress.PostalCode" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Postal/ZIP code" />
 
-@Html.ValidationMessageFor(x => x.ExtraDetails, "", new { @class = "validation-message text-rose-600" })
+@Html.RedValidationMessage(x => x.ExtraDetails, "ShippingAddress.ExtraDetails")
 <input asp-for="ExtraDetails" name="ShippingAddress.ExtraDetails" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Extra details (optional)" />
 
-@Html.ValidationMessageFor(x => x.Latitude, "", new { @class = "validation-message text-rose-600" })
-<input type="number" step="0.01" max="90" min="-90" asp-for="Latitude" name="ShippingAddress.Latitude" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Latitude" />
+@Html.RedValidationMessage(x => x.Latitude, "ShippingAddress.Latitude")
+<input asp-for="Pre_Latitude" name="ShippingAddress.Pre_Latitude" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Latitude" />
 
-@Html.ValidationMessageFor(x => x.Longitude, "", new { @class = "validation-message text-rose-600" })
-<input type="number" step="0.01" max="90" min="-90" asp-for="Longitude" name="ShippingAddress.Longitude" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Longitude" />
+@Html.RedValidationMessage(x => x.Longitude, "ShippingAddress.Longitude")
+<input asp-for="Pre_Longitude" name="ShippingAddress.Pre_Longitude" class="w-full border border-gray-nurse-100 p-2 mb-4" placeholder="Longitude" />

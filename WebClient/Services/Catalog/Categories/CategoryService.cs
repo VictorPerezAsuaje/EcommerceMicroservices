@@ -29,7 +29,7 @@ public class CategoryService : ICategoryService
             EndpointType = EndpointType.POST,
             Url = _catalogOptions.BaseUrl + "/categories",
             Data = dto
-        });
+        }, false);
     }
 
     public async Task<ResponseDTO> DeleteAsync(string name)
@@ -43,7 +43,7 @@ public class CategoryService : ICategoryService
         {
             EndpointType = EndpointType.GET,
             Url = _catalogOptions.BaseUrl + "/categories"
-        });
+        }, false);
     }
 
     public async Task<ResponseDTO<CategoryGetDTO>> GetByNameAsync(string name)

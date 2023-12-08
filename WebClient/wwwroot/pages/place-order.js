@@ -1,5 +1,5 @@
 ﻿function orderFormValid() {
-    $("[data-val-required]").valid()
+    $("[data-val-required]").valid();
     let hasErrors = false;
 
     document

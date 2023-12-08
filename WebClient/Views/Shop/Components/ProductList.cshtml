@@ -3,6 +3,9 @@
 @using WebClient.Services.Catalog.Products
 @model List<ProductGetDTO>
 
+@if(Model is null || Model?.Count == 0)
+    return;
+
 @foreach (var product in Model)
 {
     <article class="flex flex-col justify-center text-center">

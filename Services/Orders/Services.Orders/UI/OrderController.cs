@@ -72,7 +72,7 @@ public class OrderController : ControllerBase
         }
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id}/cancel")]
     public async Task<IActionResult> CancelOrderAsync(Guid id)
     {
         if (id == default)
