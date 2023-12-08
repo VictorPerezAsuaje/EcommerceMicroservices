@@ -13,6 +13,7 @@ using Services.Orders.Infrastructure;
 using Xunit.Abstractions;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace Services.Orders.Tests.Integration;
 
@@ -30,6 +31,8 @@ public class OrderControllerTests : IClassFixture<CustomWebApplicationFactory>
         {
             AllowAutoRedirect = false
         });
+
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Test");
 
         factory.CleanupDatabase();
     }

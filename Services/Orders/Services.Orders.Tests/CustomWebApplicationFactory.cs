@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -6,16 +8,34 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Services.Orders.Infrastructure;
 using Services.Orders.Tests.Utilities;
+using System.Security.Claims;
 
 namespace Services.Orders.Tests;
+
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
+    {      
+
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll(typeof(DbContextOptions<OrderDbContext>));
+
+            services
+                .AddAuthentication("Test")
+                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("TestScheme", options =>
+                {
+
+                });
+
+            services.AddAuthorization(opts =>
+            {
+                opts.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes("TestScheme")
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });
 
             services.AddDbContext<OrderDbContext>(opts =>
             {

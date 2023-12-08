@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Services.Orders.Application;
 using Services.Orders.Application.Orders;
 
 namespace Services.Orders.UI;
 
 [Route("orders")]
+[Authorize]
 public class OrderController : ControllerBase
 {
     IOrderService _orderService;

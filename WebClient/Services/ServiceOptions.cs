@@ -6,6 +6,7 @@ public class APIServices
     public ServiceOptions Auth { get; set; }
     public ServiceOptions Catalog { get; set; }
     public ServiceOptions Cart { get; set; }
+    public ServiceOptions Order { get; set; }
 }
 
 public class ServiceOptions
