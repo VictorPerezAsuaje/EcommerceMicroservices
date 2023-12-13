@@ -405,6 +405,70 @@ public class OrderControllerTests : IClassFixture<CustomWebApplicationFactory>
         order.Should().BeNull();
     }
 
+    [Theory]
+    [InlineData("ThisCountryDoesNotExist", "ES", "FedEx", "Stripe")]
+    [InlineData("Spain", "ThisCountryCodeDoesNotExist", "FedEx", "Stripe")]
+    [InlineData("Spain", "USA", "FedEx", "Stripe")]
+    [InlineData("Spain", "ES", "ThisShippingMethodDoesNotExist", "Stripe")]
+    [InlineData("Spain", "ES", "FedEx", "ThisPaymentMethodDoesNotExist")]
+
+    public async Task Create_WithNonExistingValues_ReturnsBadRequest(string countryName, string countryCode, string shippingMethod, string paymentMethod)
+    {
+        // Arrage
+        List<OrderItemPostDTO> itemsDto = new()
+        {
+            new()
+            {
+                ProductId = DbInitializer.OrderItems[0].ProductId,
+                Name = DbInitializer.OrderItems[0].Name,
+                Amount = DbInitializer.OrderItems[0].Amount,
+                Price = DbInitializer.OrderItems[0].Price
+            }
+        };
+
+        AddressPostDTO addressDto = new()
+        {
+            CountryName = countryName,
+            CountryCode = countryCode,
+            MajorDivision = "Test major division",
+            Locality = "Test locality",
+            Street = "Test street",
+            Latitude = 1.2345,
+            Longitude = 5.4321
+        };
+
+        OrderPostDTO dto = new()
+        {
+            ClientId = Guid.NewGuid(),
+            Items = itemsDto,
+            ShippingFirstName = "Test First Name",
+            ShippingLastName = "Test Last Name",
+            ShippingAddress = addressDto,
+            ShippingMethod = shippingMethod,
+            PaymentMethod = paymentMethod,
+        };
+
+        double subtotal = Math.Round(itemsDto.Sum(x => x.Price * x.Amount), 2);
+        double total = Math.Round(subtotal + subtotal * DbInitializer.ShippingMethods[0].ApplicableFees, 2);
+
+        // Act
+        var result = await _client.PostAsJsonAsync("/orders", dto);
+
+        // Assert
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        Order? order = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+            order = await context.Orders.Where(x => x.ClientId == dto.ClientId) // This is the only order that could "match" this case
+                                        .SingleOrDefaultAsync();
+        }
+
+        order.Should().BeNull();
+    }
+
     [Fact]
     public async Task CancelOrder_ExistingId_ReturnsOkAndChangesStatus()
     {

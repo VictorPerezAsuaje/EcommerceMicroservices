@@ -164,11 +164,26 @@ public class OrdersController : Controller
                 return View(order);
             }
 
+            var resultCart = await _cartService.ClearCartAsync(clientId);
+
+            if (result.IsFailure)
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Order error";
+                    x.Message = result.Error;
+                    x.Icon = NotificationIcon.error;
+                });
+
+                return View(order);
+            }
+
             this.InvokeNotification(x =>
             {
                 x.Title = "Order completed successfully";
                 x.Icon = NotificationIcon.success;
             });
+
             return RedirectToAction("Index", "Home");
         }
         catch (Exception ex)

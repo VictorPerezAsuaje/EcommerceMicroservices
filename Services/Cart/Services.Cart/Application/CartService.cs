@@ -8,9 +8,10 @@ namespace Services.Cart.Application;
 public interface ICartService
 {
     Task<Result<List<CartItemGetDTO>>> GetCartByClientIdAsync(Guid clientId);
-    Task<Result> UpdateCartItemAsync(Guid clientId, Guid productId, CartItemPutDTO dto);
+    Task<Result> UpdateCartItemAmountAsync(Guid clientId, Guid productId, ItemAmountPutDTO dto);
     Task<Result> TransferCartItemsAsync(Guid fromId, Guid toId);
     Task<Result> RemoveCartItemAsync(Guid clientId, Guid productId);
+    Task<Result> ClearCartAsync(Guid clientId);
     Task<Result> AddCartItemAsync(Guid clientId, CartItemPostDTO dto);
 }
 
@@ -57,7 +58,7 @@ public class CartService : ICartService
         return Result.Ok();
     }
 
-    public async Task<Result> UpdateCartItemAsync(Guid clientId, Guid productId, CartItemPutDTO dto)
+    public async Task<Result> UpdateCartItemAmountAsync(Guid clientId, Guid productId, ItemAmountPutDTO dto)
     {
         CartItem? item = await _context.CartItems.FirstOrDefaultAsync(x => x.ClientId == clientId && x.ProductId == productId);
 
@@ -100,6 +101,21 @@ public class CartService : ICartService
         var originItems = await _context.CartItems.Where(x => x.ClientId == fromId).ToListAsync();
         _context.CartItems.RemoveRange(originItems);
         await _context.SaveChangesAsync();
+        return Result.Ok();
+    }
+
+    public async Task<Result> ClearCartAsync(Guid clientId)
+    {
+        var items = await _context.CartItems
+                                        .Where(x => x.ClientId == clientId)
+                                        .ToListAsync();
+
+        if (items.Count == 0)
+            return Result.Ok();
+
+        _context.CartItems.RemoveRange(items);
+        await _context.SaveChangesAsync();
+
         return Result.Ok();
     }
 }

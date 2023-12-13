@@ -313,4 +313,219 @@ public class CartControllerTests : IClassFixture<CustomWebApplicationFactory>
         response.Should().NotBeNull();
         response.Should().NotBeNullOrWhiteSpace();
     }
+
+    [Fact]
+    public async Task UpdateCartItemAmount_WithValidClientIdAndData_ReturnsOk()
+    {
+        // Arrage
+        ItemAmountPutDTO dto = new ItemAmountPutDTO()
+        {
+            Amount = 5,
+        };
+
+        // Act
+        var result = await _client.PutAsJsonAsync("/cart/" + DbInitializer.ClientIdOne + "/" + DbInitializer.CartItems[0].ProductId, dto);
+
+        // Assert
+        result.EnsureSuccessStatusCode();
+
+        var response = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        response.Should().NotBeNull();
+        response.IsSuccess.Should().Be(true);
+        response.Error.Should().BeNullOrEmpty();
+
+        CartItem? item = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CartDbContext>();
+            item = await context.CartItems.Where(x => x.ProductId == DbInitializer.CartItems[0].ProductId && x.ClientId == DbInitializer.ClientIdOne).SingleOrDefaultAsync();
+        }
+
+        item.Should().NotBeNull();
+        item.Amount.Should().Be(dto.Amount);
+    }
+
+    [Fact]
+    public async Task UpdateCartItemAmount_WithInvalidClientId_ReturnsBadRequest()
+    {
+        // Arrage
+        ItemAmountPutDTO dto = new ItemAmountPutDTO()
+        {
+            Amount = 5,
+        };
+
+        var clientId = Guid.NewGuid();
+
+        // Act
+        var result = await _client.PutAsJsonAsync("/cart/" + clientId + "/" + DbInitializer.CartItems[0].ProductId, dto);
+
+        // Assert
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var response = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        response.Should().NotBeNull();
+        response.IsSuccess.Should().Be(false);
+        response.Error.Should().NotBeNullOrEmpty();
+
+        CartItem? item = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CartDbContext>();
+            item = await context.CartItems.Where(x => x.ProductId == DbInitializer.CartItems[0].ProductId && x.ClientId == clientId).SingleOrDefaultAsync();
+        }
+
+        item.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task UpdateCartItemAmount_WithInvalidData_ReturnsBadRequest()
+    {
+        // Arrage
+        ItemAmountPutDTO dto = new ItemAmountPutDTO()
+        {
+            Amount = -5,
+        };
+
+        // Act
+        var result = await _client.PutAsJsonAsync("/cart/" + DbInitializer.ClientIdOne + "/" + DbInitializer.CartItems[0].ProductId, dto);
+
+        // Assert
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var response = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        response.Should().NotBeNull();
+        response.IsSuccess.Should().Be(false);
+        response.Error.Should().NotBeNullOrEmpty();
+
+        CartItem? item = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CartDbContext>();
+            item = await context.CartItems.Where(x => x.ProductId == DbInitializer.CartItems[0].ProductId && x.ClientId == DbInitializer.ClientIdOne).SingleOrDefaultAsync();
+        }
+
+        item.Should().NotBeNull();
+        item.Amount.Should().NotBe(dto.Amount);
+    }
+
+    [Fact]
+    public async Task RemoveProductFromCart_WithValidClientIdAndProductId_ReturnsOk()
+    {
+        // Arrage
+
+        // Act
+        var result = await _client.DeleteAsync("/cart/" + DbInitializer.ClientIdOne + "/" + DbInitializer.CartItems[0].ProductId);
+
+        // Assert
+        result.EnsureSuccessStatusCode();
+
+        var response = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        response.Should().NotBeNull();
+        response.IsSuccess.Should().Be(true);
+        response.Error.Should().BeNullOrEmpty();
+
+        CartItem? item = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CartDbContext>();
+            item = await context.CartItems.Where(x => x.ProductId == DbInitializer.CartItems[0].ProductId && x.ClientId == DbInitializer.ClientIdOne).SingleOrDefaultAsync();
+        }
+
+        item.Should().BeNull();
+    }
+
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData(default, default)]
+    [InlineData("11111111-1111-1111-1111-111111111111", default)]
+    [InlineData("11111111-1111-1111-1111-111111111111", null)]
+    [InlineData(default, "12111111-1111-1111-1111-111111111111")]
+    [InlineData(null, "12111111-1111-1111-1111-111111111111")]
+    public async Task RemoveProductFromCart_WithInvalidClientIdOrProductId_ReturnsNotFound(Guid clientId, Guid productId)
+    {
+        // Arrage
+
+        // Act
+        var result = await _client.DeleteAsync("/cart/" + clientId + "/" + productId);
+
+        // Assert
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        var response = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        response.Should().NotBeNull();
+        response.IsSuccess.Should().Be(false);
+        response.Error.Should().NotBeNullOrEmpty();
+
+        CartItem? item = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CartDbContext>();
+            item = await context.CartItems.Where(x => x.ProductId == productId && x.ClientId == clientId).SingleOrDefaultAsync();
+        }
+
+        item.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ClearCart_WithValidClientId_ReturnsOk()
+    {
+        // Arrage
+
+        // Act
+        var result = await _client.DeleteAsync("/cart/" + DbInitializer.ClientIdOne);
+
+        // Assert
+        result.EnsureSuccessStatusCode();
+
+        var response = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        response.Should().NotBeNull();
+        response.IsSuccess.Should().Be(true);
+        response.Error.Should().BeNullOrEmpty();
+
+        List<CartItem> items = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CartDbContext>();
+            items = await context.CartItems.Where(x => x.ClientId == DbInitializer.ClientIdOne).ToListAsync();
+        }
+
+        items.Should().NotBeNull();
+        items.Count.Should().Be(0);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData(default)]    
+    public async Task RemoveProductFromCart_WithInvalidClientId_ReturnsNotFound(Guid clientId)
+    {
+        // Arrage
+
+        // Act
+        var result = await _client.DeleteAsync("/cart/" + clientId);
+
+        // Assert
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        var response = await result.Content.ReadFromJsonAsync<ResponseDTO>();
+        response.Should().NotBeNull();
+        response.IsSuccess.Should().Be(false);
+        response.Error.Should().NotBeNullOrEmpty();
+
+        List<CartItem> items = null;
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<CartDbContext>();
+            items = await context.CartItems.Where(x => x.ClientId == clientId).ToListAsync();
+        }
+
+        items.Should().NotBeNull();
+        items.Count.Should().Be(0);
+    }
 }

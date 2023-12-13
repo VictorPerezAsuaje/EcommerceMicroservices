@@ -85,7 +85,7 @@ public class CartController : Controller
     }
 
     [HttpPut("{clientId}/{productId}")]
-    public async Task<IActionResult> UpdateCartItem(Guid clientId, Guid productId, [FromBody] CartItemPutDTO dto)
+    public async Task<IActionResult> UpdateCartItemAmount(Guid clientId, Guid productId, [FromBody] ItemAmountPutDTO dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(new ResponseDTO(false, ModelState.GetErrorsAsString()));
@@ -98,7 +98,7 @@ public class CartController : Controller
 
         try
         {
-            ResponseDTO result = (await _cartService.UpdateCartItemAsync(clientId, productId, dto)).ToResponseDTO();
+            ResponseDTO result = (await _cartService.UpdateCartItemAmountAsync(clientId, productId, dto)).ToResponseDTO();
 
             if (result.IsFailure)
                 return BadRequest(result);
@@ -115,14 +115,11 @@ public class CartController : Controller
     [HttpDelete("{clientId}/{productId}")]
     public async Task<IActionResult> RemoveProductFromCart(Guid clientId, Guid productId)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(new ResponseDTO(false, ModelState.GetErrorsAsString()));
-
         if (clientId == default(Guid))
-            return NotFound("The client could not be found.");
+            return NotFound(new ResponseDTO(false, "The client could not be found."));
 
         if (productId == default(Guid))
-            return NotFound("The product could not be found.");
+            return NotFound(new ResponseDTO(false, "The product could not be found."));
 
         try
         {
@@ -136,7 +133,29 @@ public class CartController : Controller
         catch (Exception ex)
         {
             // Log exception
-            return StatusCode(500, "There was an error trying to complete the request");
+            return StatusCode(500, new ResponseDTO(false, "There was an error trying to complete the request"));
+        }
+    }
+
+    [HttpDelete("{clientId}")]
+    public async Task<IActionResult> ClearCart(Guid clientId)
+    {
+        if (clientId == default(Guid))
+            return NotFound(new ResponseDTO(false, "The client could not be found."));
+
+        try
+        {
+            ResponseDTO result = (await _cartService.ClearCartAsync(clientId)).ToResponseDTO();
+
+            if (result.IsFailure)
+                return NotFound(result);
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            // Log exception
+            return StatusCode(500, new ResponseDTO(false, "There was an error trying to complete the request"));
         }
     }
 }
