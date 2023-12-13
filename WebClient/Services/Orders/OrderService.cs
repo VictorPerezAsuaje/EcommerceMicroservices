@@ -6,6 +6,9 @@ namespace WebClient.Services.Order;
 
 public interface IOrderService
 {
+    Task<ResponseDTO<List<CountryVM>>> GetAvailableCoutriesAsync();
+    Task<ResponseDTO<List<ShippingMethodVM>>> GetAvailableShippingMethodsAsync(string countryName);
+    Task<ResponseDTO<List<PaymentMethodVM>>> GetAvailablePaymentMethodsAsync();
     Task<ResponseDTO> CancelOrderAsync(Guid clientId);
     Task<ResponseDTO> PlaceOrderAsync(Guid clientId, OrderPostDTO dto);
 }
@@ -26,7 +29,7 @@ public class OrderService : IOrderService
         return await _sender.SendAsync(new RequestDTO()
         {
             EndpointType = EndpointType.POST,
-            Url = _orderOptions.BaseUrl + "/orders",
+            Url = $"{_orderOptions.BaseUrl}/orders",
             Data = dto
         });
     }
@@ -36,7 +39,34 @@ public class OrderService : IOrderService
         return await _sender.SendAsync(new RequestDTO()
         {
             EndpointType = EndpointType.PUT,
-            Url = _orderOptions.BaseUrl + "/orders/" + clientId + "/cancel"
+            Url = $"{_orderOptions.BaseUrl}/orders/{clientId}/cancel"
+        });
+    }
+
+    public async Task<ResponseDTO<List<CountryVM>>> GetAvailableCoutriesAsync()
+    {
+        return await _sender.SendAsync<List<CountryVM>>(new RequestDTO()
+        {
+            EndpointType = EndpointType.GET,
+            Url = $"{_orderOptions.BaseUrl}/countries"
+        });
+    }
+
+    public async Task<ResponseDTO<List<ShippingMethodVM>>> GetAvailableShippingMethodsAsync(string countryName)
+    {
+        return await _sender.SendAsync<List<ShippingMethodVM>>(new RequestDTO()
+        {
+            EndpointType = EndpointType.GET,
+            Url = $"{_orderOptions.BaseUrl}/shipping-methods/{countryName}"
+        });
+    }
+
+    public async Task<ResponseDTO<List<PaymentMethodVM>>> GetAvailablePaymentMethodsAsync()
+    {
+        return await _sender.SendAsync<List<PaymentMethodVM>>(new RequestDTO()
+        {
+            EndpointType = EndpointType.GET,
+            Url = $"{_orderOptions.BaseUrl}/payment-methods"
         });
     }
 }

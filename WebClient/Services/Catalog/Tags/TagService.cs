@@ -27,7 +27,7 @@ public class TagService : ITagService
         return await _sender.SendAsync<Guid>(new RequestDTO()
         {
             EndpointType = EndpointType.POST,
-            Url = _catalogOptions.BaseUrl + "/tags",
+            Url = $"{_catalogOptions.BaseUrl}/tags",
             Data = dto
         }, false);
     }
@@ -42,7 +42,7 @@ public class TagService : ITagService
         return await _sender.SendAsync<List<TagGetDTO>>(new RequestDTO()
         {
             EndpointType = EndpointType.GET,
-            Url = _catalogOptions.BaseUrl + "/tags"
+            Url = $"{_catalogOptions.BaseUrl}/tags"
         }, false);        
     }
 

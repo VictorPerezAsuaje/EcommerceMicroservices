@@ -38,7 +38,8 @@ public class OrderService : IOrderService
         Address address = addressResult.Value;
 
         ShippingMethod? shippingMethod = await _context.ShippingMethods
-            .Where(x => x.Name == dto.ShippingMethod && x.CountryName == address.CountryName)
+            .Include(x => x.Countries)
+            .Where(x => x.Name == dto.ShippingMethod && x.Countries.Any(x => x.Name == address.CountryName))
             .SingleOrDefaultAsync();
 
         if (shippingMethod is null)

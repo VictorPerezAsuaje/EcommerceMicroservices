@@ -26,7 +26,7 @@ public class AuthService : IAuthService
         return await _sender.SendAsync<string>(new RequestDTO()
         {
             EndpointType = EndpointType.POST,
-            Url = _authOptions.BaseUrl + "/auth/login",
+            Url = $"{_authOptions.BaseUrl}/auth/login",
             Data = dto
         }, false);
     }
@@ -41,7 +41,7 @@ public class AuthService : IAuthService
         return await _sender.SendAsync(new RequestDTO()
         {
             EndpointType = EndpointType.POST,
-            Url = _authOptions.BaseUrl + "/auth/register",
+            Url = $"{_authOptions.BaseUrl}/auth/register",
             Data = dto
         }, false);
     }

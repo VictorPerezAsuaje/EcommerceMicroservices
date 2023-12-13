@@ -110,9 +110,13 @@
 
                 <h3 class="text-lg text-zuccini-950 font-bold mt-8 mb-4">Shipping method</h3>
 
-                <div hx-get="/orders/shipping-methods?selected=@Model.Shipping?.SelectedValue" hx-trigger="load delay:500ms" hx-swap="outerHTML">
+                <div id="shippingMethodContainer" 
+                    hx-get="/orders/shipping-methods?selected=@(Model.Shipping?.SelectedValue)&countryName=" 
+                    hx-trigger="country-changed from:body" 
+                    hx-swap="innerHTML"
+                >
                     <div class="border border-gray-nurse-300 shadow rounded-md p-4 mt-10 w-full mx-auto animate-pulse">
-                        Loading...
+                        Select a country to load shipping methods available
                     </div>
                 </div>
             </details>

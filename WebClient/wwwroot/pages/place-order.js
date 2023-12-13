@@ -36,3 +36,15 @@ function reloadOrderFormValidators() {
     newForm.removeData("unobtrusiveValidation");
     $.validator.unobtrusive.parse(newForm);
 } 
+
+function applyShippingMethodCountrySelected() {
+    const dropdown = document.getElementById("ShippingAddress_CountryName");
+    const shippingMethod = document.getElementById('shippingMethodContainer');
+    let url = shippingMethod.getAttribute("hx-get");
+    url = url.split("&countryName=")[0];
+    url += `&countryName=${dropdown.value}`;
+    shippingMethod.setAttribute("hx-get", url);
+
+    htmx.process(shippingMethod);
+    htmx.trigger("#shippingMethodContainer", "country-changed");
+}

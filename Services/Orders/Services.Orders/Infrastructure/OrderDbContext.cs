@@ -26,10 +26,10 @@ internal class DbInitializer
 
     public static List<ShippingMethod> ShippingMethods = new List<ShippingMethod>()
     {
-        new ShippingMethod("FedEx", Countries[0].Name, 0.02),
-        new ShippingMethod("MRW", Countries[2].Name, 0.05),
-        new ShippingMethod("Nacex", Countries[1].Name, 0.01),
-        new ShippingMethod("Correos", Countries[0].Name, 0.02),
+        new ShippingMethod("FedEx", 0.02).WithValidCountries(new List<Country> { Countries[0] }),
+        new ShippingMethod("MRW", 0.05).WithValidCountries(new List<Country> { Countries[2] }),
+        new ShippingMethod("Nacex", 0.01).WithValidCountries(new List<Country> { Countries[1] }),
+        new ShippingMethod("Correos", 0.02).WithValidCountries(new List<Country> { Countries[0] }),
     };
 
     public static List<OrderItem> OrderItems = new List<OrderItem>()
@@ -66,8 +66,8 @@ internal class DbInitializer
 
     public static List<PaymentMethod> PaymentMethods = new List<PaymentMethod>()
     {
-        new PaymentMethod("Paypal"),
-        new PaymentMethod("Stripe")
+        PaymentMethod.Paypal,
+        PaymentMethod.Stripe
     };
 
     public static List<Order> Orders = new List<Order>()

@@ -40,11 +40,19 @@ public class OrdersController : Controller
 
     [HttpGet("available-countries")]
     public async Task<IActionResult> AvailableCountries(string? selected = null)
-    {
+    {      
+        var result = await _orderService.GetAvailableCoutriesAsync();
+
+        if (result.IsFailure)
+        {
+            Response.Headers.Add("HX-Trigger-After-Swap", "reload-validators");
+            return PartialView("Partials/_OrderCountries", new OrderCountryVM());
+        }
+
         OrderCountryVM dto = new OrderCountryVM()
         {
             SelectedValue = selected,
-            AvailableCountries = StaticOrderData.Countries
+            AvailableCountries = result.Value
         };
 
         Response.Headers.Add("HX-Trigger-After-Swap", "reload-validators");
@@ -54,10 +62,18 @@ public class OrdersController : Controller
     [HttpGet("payment-methods")]
     public async Task<IActionResult> PaymentMethods(string? selected = null)
     {
+        var result = await _orderService.GetAvailablePaymentMethodsAsync();
+
+        if (result.IsFailure)
+        {
+            Response.Headers.Add("HX-Trigger-After-Swap", "reload-validators");
+            return PartialView("Partials/_PaymentMethods", new OrderPaymentMethodVM());
+        }
+
         OrderPaymentMethodVM dto = new OrderPaymentMethodVM()
         {
             SelectedValue = selected,
-            AvailablePayments = StaticOrderData.PaymentMethods
+            AvailablePayments = result.Value
         };
 
         Response.Headers.Add("HX-Trigger-After-Swap", "reload-validators");
@@ -65,12 +81,26 @@ public class OrdersController : Controller
     }
 
     [HttpGet("shipping-methods")]
-    public async Task<IActionResult> ShippingMethods(string? selected = null)
+    public async Task<IActionResult> ShippingMethods(string countryName, string? selected = null)
     {
+        if(string.IsNullOrWhiteSpace(countryName))
+        {
+            Response.Headers.Add("HX-Trigger-After-Swap", "reload-validators");
+            return PartialView("Partials/_ShippingMethods", new OrderShippingMethodVM());
+        }
+
+        var result = await _orderService.GetAvailableShippingMethodsAsync(countryName);
+
+        if (result.IsFailure)
+        {
+            Response.Headers.Add("HX-Trigger-After-Swap", "reload-validators");
+            return PartialView("Partials/_ShippingMethods", new OrderShippingMethodVM());
+        }
+
         OrderShippingMethodVM dto = new OrderShippingMethodVM()
         {
             SelectedValue = selected,
-            AvailableShippings = StaticOrderData.ShippingMethods
+            AvailableShippings = result.Value
         };
 
         Response.Headers.Add("HX-Trigger-After-Swap", "reload-validators");
@@ -92,7 +122,7 @@ public class OrdersController : Controller
 
             return RedirectToAction("Login", "Home");
         }
-
+        
         OrderVM order = new OrderVM();
 
         try
@@ -109,6 +139,18 @@ public class OrdersController : Controller
                 return RedirectToAction("Index", "Home");
 
             order.Items = result.Value.ToOrderItemList().ToList();
+
+            if (order.Items.Count == 0)
+            {
+                this.InvokeNotification(x =>
+                {
+                    x.Title = "Your cart is empty!";
+                    x.Message = "To place an order, please first select what you want to purchase.";
+                    x.Icon = NotificationIcon.warning;
+                });
+
+                return RedirectToAction("Index", "Shop");
+            }
         }
         catch (Exception ex)
         {
@@ -166,6 +208,7 @@ public class OrdersController : Controller
 
             var resultCart = await _cartService.ClearCartAsync(clientId);
 
+            // TODO: What should happen for this case? Some kind of rollback? And if it fails? Woulndn't it be better to allow for this state and retry with some kind of internal database scheduled event?
             if (result.IsFailure)
             {
                 this.InvokeNotification(x =>

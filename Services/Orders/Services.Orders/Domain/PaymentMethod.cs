@@ -7,9 +7,10 @@ public class PaymentMethod
 
     public string Name { get; private set; }
 
-    protected PaymentMethod() { }
-    public PaymentMethod(string name)
-    {
+    protected PaymentMethod(string name) {
         Name = name;
     }
+
+    public static List<PaymentMethod> GetAll()
+        => new List<PaymentMethod> { Paypal, Stripe };
 }

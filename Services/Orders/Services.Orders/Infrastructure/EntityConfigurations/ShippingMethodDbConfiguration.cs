@@ -9,10 +9,8 @@ internal class ShippingMethodDbConfiguration : IEntityTypeConfiguration<Shipping
     public void Configure(EntityTypeBuilder<ShippingMethod> builder)
     {
         builder.HasKey(x => x.Name);
-        builder.HasOne(x => x.Country)
-            .WithMany()
-            .HasForeignKey(x => x.CountryName)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(x => x.Countries)
+            .WithMany();
 
         builder.Property(x => x.ApplicableFees).IsRequired();
     }

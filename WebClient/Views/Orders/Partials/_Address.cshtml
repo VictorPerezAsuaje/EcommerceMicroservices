@@ -2,7 +2,14 @@
 @model AddressVM
 
 
-<select class="w-full border border-gray-nurse-100 p-2 mb-4" hx-get="/orders/available-countries?selected=@Model?.Country?.SelectedValue" hx-trigger="load delay:200ms" hx-swap="outerHTML" name="ShippingAddress.CountryName">
+<select 
+        id="ShippingAddress_CountryName"
+        class="w-full border border-gray-nurse-100 p-2 mb-4" 
+        hx-get="/orders/available-countries?selected=@Model?.Country?.SelectedValue" 
+        hx-trigger="load delay:200ms" 
+        hx-swap="outerHTML" 
+        name="ShippingAddress.CountryName"
+        onchange="applyShippingMethodCountrySelected(this)">
     <option value="">Select your country...</option>
 </select>
 

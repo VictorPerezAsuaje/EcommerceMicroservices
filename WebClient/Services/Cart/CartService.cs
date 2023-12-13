@@ -28,7 +28,7 @@ public class CartService : ICartService
         return await _sender.SendAsync(new RequestDTO()
         {
             EndpointType = EndpointType.POST,
-            Url = _cartOptions.BaseUrl + "/cart/" + clientId,
+            Url = $"{_cartOptions.BaseUrl}/cart/{clientId}",
             Data = dto
         }, false);
     }
@@ -38,7 +38,7 @@ public class CartService : ICartService
         return await _sender.SendAsync(new RequestDTO()
         {
             EndpointType = EndpointType.DELETE,
-            Url = _cartOptions.BaseUrl + "/cart/" + clientId 
+            Url = $"{_cartOptions.BaseUrl}/cart/{clientId}"
         }, false);
     }
 
@@ -47,7 +47,7 @@ public class CartService : ICartService
         return await _sender.SendAsync<List<CartItemGetDTO>>(new RequestDTO()
         {
             EndpointType = EndpointType.GET,
-            Url = _cartOptions.BaseUrl + "/cart/" + clientId,
+            Url = $"{_cartOptions.BaseUrl}/cart/{clientId}",
         }, false);
     }
 
@@ -56,7 +56,7 @@ public class CartService : ICartService
         return await _sender.SendAsync(new RequestDTO()
         {
             EndpointType = EndpointType.DELETE,
-            Url = _cartOptions.BaseUrl + "/cart/" + clientId + "/" + productId
+            Url = $"{_cartOptions.BaseUrl}/cart/{clientId}/{productId}"
         }, false);
     }
 
@@ -65,7 +65,7 @@ public class CartService : ICartService
         return await _sender.SendAsync(new RequestDTO()
         {
             EndpointType = EndpointType.PUT,
-            Url = _cartOptions.BaseUrl + "/cart/" + fromId + "/transfer-to/" + toId
+            Url = $"{_cartOptions.BaseUrl}/cart/{fromId}/transfer-to/{toId}"
         }, false);
     }
 
@@ -74,7 +74,7 @@ public class CartService : ICartService
         return await _sender.SendAsync(new RequestDTO()
         {
             EndpointType = EndpointType.PUT,
-            Url = _cartOptions.BaseUrl + "/cart/" + clientId + "/" + productId,
+            Url = $"{_cartOptions.BaseUrl}/cart/{clientId}/{productId}",
             Data = dto
         }, false);
     }

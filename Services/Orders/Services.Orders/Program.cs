@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Services.Orders.Application.Countries;
 using Services.Orders.Application.Orders;
+using Services.Orders.Application.ShippingMethods;
 using Services.Orders.Infrastructure;
 using Services.Orders.UI;
 using System.Text;
@@ -21,6 +23,8 @@ builder.Services.AddDbContext<OrderDbContext>(opts =>
 });
 
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IShippingMethodService, PaymentMethodService>();
+builder.Services.AddScoped<ICountryService, CountryService>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
 

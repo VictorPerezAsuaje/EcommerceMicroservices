@@ -27,7 +27,7 @@ public class CategoryService : ICategoryService
         return await _sender.SendAsync<Guid>(new RequestDTO()
         {
             EndpointType = EndpointType.POST,
-            Url = _catalogOptions.BaseUrl + "/categories",
+            Url = $"{_catalogOptions.BaseUrl}/categories",
             Data = dto
         }, false);
     }
@@ -42,7 +42,7 @@ public class CategoryService : ICategoryService
         return await _sender.SendAsync<List<CategoryGetDTO>>(new RequestDTO()
         {
             EndpointType = EndpointType.GET,
-            Url = _catalogOptions.BaseUrl + "/categories"
+            Url = $"{_catalogOptions.BaseUrl}/categories"
         }, false);
     }
 

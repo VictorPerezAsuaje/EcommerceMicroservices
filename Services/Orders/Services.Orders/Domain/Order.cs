@@ -53,7 +53,7 @@ public class Order
         if (string.IsNullOrWhiteSpace(lastName))
             return Result.Fail<Order>("The last name of the client is required.");
 
-        if (shippingMethod.CountryName != shippingAddress.CountryName)
+        if (!shippingMethod.Countries.Any(x => x.Name == shippingAddress.CountryName))
             return Result.Fail<Order>("The shipping method selected for the shipping country is not valid.");
 
         var resultDiscount = discountCode?.UseCode(clientId, orderId);

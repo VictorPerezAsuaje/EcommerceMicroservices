@@ -27,7 +27,7 @@ public class ProductService : IProductService
         return await _sender.SendAsync<Guid>(new RequestDTO()
         {
             EndpointType = EndpointType.POST,
-            Url = _catalogOptions.BaseUrl + "/products",
+            Url = $"{_catalogOptions.BaseUrl}/products",
             Data = dto
         }, false);
     }
@@ -42,7 +42,7 @@ public class ProductService : IProductService
         return await _sender.SendAsync<List<ProductGetDTO>>(new RequestDTO()
         {
             EndpointType = EndpointType.GET,
-            Url = _catalogOptions.BaseUrl + "/products"
+            Url = $"{_catalogOptions.BaseUrl}/products"
         }, false);
     }
 
@@ -51,7 +51,7 @@ public class ProductService : IProductService
         return await _sender.SendAsync<ProductGetDTO>(new RequestDTO()
         {
             EndpointType = EndpointType.GET,
-            Url = _catalogOptions.BaseUrl + "/products/" + id.ToString()
+            Url = $"{_catalogOptions.BaseUrl}/products/{id}"
         }, false);
     }
 
