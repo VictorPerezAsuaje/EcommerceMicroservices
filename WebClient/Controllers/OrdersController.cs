@@ -7,25 +7,6 @@ using WebClient.Utilities;
 
 namespace WebClient.Controllers;
 
-public static class StaticOrderData
-{
-    public static List<ShippingMethodVM> ShippingMethods => new()
-    {
-        new ShippingMethodVM { Name = "FedEx" },
-        new ShippingMethodVM { Name = "MRW" },
-        new ShippingMethodVM { Name = "Nacex" },
-        new ShippingMethodVM { Name = "Correos" }
-    };
-
-    public static List<PaymentMethodVM> PaymentMethods => new()
-    {
-        new PaymentMethodVM { Name = "Paypal" },
-        new PaymentMethodVM { Name = "Stripe" }
-    };
-
-    public static List<CountryVM> Countries => new() { new() { Name = "Spain" } };
-}
-
 [Route("orders")]
 public class OrdersController : Controller
 {
@@ -181,7 +162,7 @@ public class OrdersController : Controller
                     x.Message = ModelState.GetErrorsAsHtml();
                     x.Icon = NotificationIcon.error;
                 });
-                
+
                 return View(order);
             }
 
@@ -209,7 +190,7 @@ public class OrdersController : Controller
             var resultCart = await _cartService.ClearCartAsync(clientId);
 
             // TODO: What should happen for this case? Some kind of rollback? And if it fails? Woulndn't it be better to allow for this state and retry with some kind of internal database scheduled event?
-            if (result.IsFailure)
+            if (resultCart.IsFailure)
             {
                 this.InvokeNotification(x =>
                 {

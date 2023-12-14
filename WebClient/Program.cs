@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using System.Security.Claims;
 using WebClient;
 using WebClient.Services;
 using WebClient.Services.Auth;
@@ -17,7 +19,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 
-
 builder.Services.AddScoped<IBaseService, BaseService>();
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 
@@ -26,9 +27,16 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         opts.ExpireTimeSpan = TimeSpan.FromDays(1);
         opts.LoginPath = "/login";
+    })
+    .AddGoogle(opts =>
+    {
+        opts.ClientId = builder.Configuration["Google:ClientId"];
+        opts.ClientSecret = builder.Configuration["Google:ClientSecret"];
+        opts.CallbackPath = "/oauth/google";
     });
 
 // AuthService
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // CatalogService

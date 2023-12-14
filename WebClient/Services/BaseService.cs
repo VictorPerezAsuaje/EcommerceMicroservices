@@ -22,8 +22,6 @@ public class BaseService : IBaseService
         _tokenProvider = tokenProvider;
     }
 
-
-
     public async Task<ResponseDTO<T>?> SendAsync<T>(RequestDTO request, bool requiresAuth = true)
     {
         try

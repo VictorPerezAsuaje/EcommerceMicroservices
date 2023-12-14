@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Services.Auth.Application;
 using Services.Auth.Domain;
 using Services.Auth.Infrastructure;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +28,7 @@ builder.Services
     })
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
+
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

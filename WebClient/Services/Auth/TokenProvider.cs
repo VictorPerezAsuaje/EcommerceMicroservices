@@ -1,4 +1,6 @@
-﻿namespace WebClient.Services.Auth;
+﻿using Microsoft.AspNetCore.DataProtection;
+
+namespace WebClient.Services.Auth;
 
 
 public interface ITokenProvider
@@ -11,6 +13,7 @@ public interface ITokenProvider
 public class TokenProvider : ITokenProvider
 {
     IHttpContextAccessor _contextAccessor;
+    
 
     public TokenProvider(IHttpContextAccessor contextAccessor)
     {
@@ -19,7 +22,14 @@ public class TokenProvider : ITokenProvider
 
     public void ClearToken()
     {
-        _contextAccessor.HttpContext?.Response.Cookies.Delete(APIServices.AuthCookie);
+        CookieOptions cookieOptions = new CookieOptions()
+        {
+            Expires = DateTime.UtcNow.AddDays(-1),
+            Secure = true,
+            IsEssential = true
+        };
+
+        _contextAccessor.HttpContext?.Response.Cookies.Delete(APIServices.AuthCookie, cookieOptions);        
     }
 
     public string? GetToken()
@@ -31,6 +41,13 @@ public class TokenProvider : ITokenProvider
 
     public void SetToken(string token)
     {
-        _contextAccessor.HttpContext?.Response.Cookies.Append(APIServices.AuthCookie, token);
+        CookieOptions cookieOptions = new CookieOptions()
+        {
+            Expires = DateTime.UtcNow.AddMonths(1),
+            Secure = true,
+            IsEssential = true
+        };
+
+        _contextAccessor.HttpContext?.Response.Cookies.Append(APIServices.AuthCookie, token, cookieOptions);
     }
 }

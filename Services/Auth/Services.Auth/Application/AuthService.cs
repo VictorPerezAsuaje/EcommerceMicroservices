@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Auth.Domain;
 using Services.Auth.Infrastructure;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace Services.Auth.Application;
 
@@ -10,6 +13,8 @@ public interface IAuthService
 {
     Task<Result> Register(RegistrationRequestDTO request);
     Task<Result<string>> Login(LoginRequestDTO request);
+    Result<ChallengeResult> GoogleLogin(GoogleLoginPostDTO dto);
+    Task<Result<string>> CompleteGoogleLogin(ExternalLoginDataDTO dto);
 }
 
 public class AuthService : IAuthService
@@ -18,18 +23,51 @@ public class AuthService : IAuthService
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    SignInManager<AppUser> _signInManager;
 
-    public AuthService(AuthDbContext context, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IJwtTokenGenerator jwtTokenGenerator)
+    public AuthService(AuthDbContext context, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IJwtTokenGenerator jwtTokenGenerator, SignInManager<AppUser> signInManager)
     {
         _context = context;
         _userManager = userManager;
         _roleManager = roleManager;
         _jwtTokenGenerator = jwtTokenGenerator;
+        _signInManager = signInManager;
+    }
+
+    public async Task<Result<string>> CompleteGoogleLogin(ExternalLoginDataDTO dto)
+    {
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+
+        // Create a new user without password if we do not have a user already
+        if (user is null)
+        {
+            user = new AppUser
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                UserName = dto.Email,
+                Email = dto.Email
+            };
+
+            await _userManager.CreateAsync(user);
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var token = _jwtTokenGenerator.GenerateToken(user, roles);
+
+        // Raise UserLogged event for confirmation email purposes and notification
+        return Result.Ok(token);
+    }
+
+    public Result<ChallengeResult> GoogleLogin(GoogleLoginPostDTO dto)
+    {
+        var properties = _signInManager.ConfigureExternalAuthenticationProperties(dto.Provider, dto.RedirectUrl);
+        return Result.Ok(new ChallengeResult(dto.Provider, properties));
     }
 
     public async Task<Result<string>> Login(LoginRequestDTO request)
     {
-        AppUser? user = await _context.Users.FirstOrDefaultAsync(x => x.Email == request.Email);
+        var user = await _userManager.FindByEmailAsync(request.Email);
 
         if (user is null)
             return Result.Fail<string>("Invalid credentials");

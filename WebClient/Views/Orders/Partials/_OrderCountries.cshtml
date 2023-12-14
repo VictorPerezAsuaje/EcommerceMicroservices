@@ -2,7 +2,9 @@
 @model OrderCountryVM
 
 @Html.RedValidationMessage(x => x.SelectedValue, "ShippingAddress.Country.SelectedValue")
-<select id="ShippingAddress_CountryName" asp-for="SelectedValue" name="ShippingAddress.Country.SelectedValue"        
+<select id="ShippingAddress_CountryName" 
+        asp-for="SelectedValue" 
+        name="ShippingAddress.Country.SelectedValue"       
         class="shipping-address w-full border border-gray-nurse-100 p-2 mb-4"
         onchange="applyShippingMethodCountrySelected()"
         >
@@ -13,3 +15,10 @@
     }
 </select>
 
+<script id="addressSpecificScript">
+    (function () {
+        console.log("Test")
+        applyShippingMethodCountrySelected();
+        document.getElementById("addressSpecificScript").remove();
+    })();
+</script>

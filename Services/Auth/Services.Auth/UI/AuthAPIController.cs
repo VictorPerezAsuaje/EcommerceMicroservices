@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services.Auth.Application;
 using Services.Auth.Domain;
@@ -48,6 +50,45 @@ public class AuthController : ControllerBase
         try
         {
             var result = (await _authService.Login(dto)).ToResponseDTO();
+
+            if (result.IsFailure)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            // Log exception
+            return StatusCode(500, "There was an error trying to complete the request");
+        }
+    }
+
+    [HttpPost("login/google")]
+    public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginPostDTO dto)
+    {
+        try
+        {
+            var result = _authService.GoogleLogin(dto).ToResponseDTO();
+
+            if (result.IsFailure)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            // Log exception
+            return StatusCode(500, "There was an error trying to complete the request");
+        }
+    }
+
+
+    [HttpPost("login/complete-google-login")]
+    public async Task<IActionResult> CompleteGoogleLogin(ExternalLoginDataDTO dto)
+    {
+        try
+        {
+            var result = (await _authService.CompleteGoogleLogin(dto)).ToResponseDTO();
 
             if (result.IsFailure)
                 return BadRequest(result);

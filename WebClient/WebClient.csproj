@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>fe0d13e9-983d-4e9a-bff5-40a902d25fd5</UserSecretsId>
   </PropertyGroup>
 
 	<Target Name="Tailwind" AfterTargets="Build">
@@ -11,7 +12,8 @@
 	</Target>
 
 	<ItemGroup>
-	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
