@@ -26,6 +26,13 @@
             </label>
 
             <div class="flex flex-col px-2">
+                @if(Model.AvailableCategories.Count == 0)
+                {
+                    <form asp-controller="Shop" asp-action="SeedShopData" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit">Seed data</button>
+                    </form>
+                }
                 @foreach (var type in Model.AvailableCategories)
                 {
                     <label for="@type.Name" class="text-md mb-2 font-light text-gray-900">

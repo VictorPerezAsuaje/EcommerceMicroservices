@@ -5,14 +5,15 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>fe0d13e9-983d-4e9a-bff5-40a902d25fd5</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
-	<Target Name="Tailwind" AfterTargets="Build">
-		<Exec Command="npm run style:build" />
-	</Target>
+	
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
 	</ItemGroup>
 

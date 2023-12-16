@@ -5,8 +5,6 @@ VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{122D5CD2-BAA8-4222-83AD-F7A8BE123C75}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{B1081107-740E-4618-A32A-98E386F62FD9}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebClient", "WebClient", "{09C668F1-80B8-47A6-A5F3-7B1B21C53138}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebClient", "WebClient\WebClient.csproj", "{326500F5-61AB-4C0E-B978-DB70757176B0}"
@@ -40,6 +38,19 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Inventory", "Services\Inventory\Services.Inventory\Services.Inventory.csproj", "{8A09FD0C-A287-4587-BFA9-2C9D269C1C38}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Inventory.Tests", "Services\Inventory\Services.Inventory.Tests\Services.Inventory.Tests.csproj", "{B0983CC3-4114-4979-8016-6F32EE656FB2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mailing", "Mailing", "{55E84608-79BF-42D2-AC92-28B657B53269}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Mailing", "Services\Mailing\Services.Mailing\Services.Mailing.csproj", "{10CB44F0-76DA-415E-9FA0-0C573BAC7C1C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Mailing.Tests", "Services\Mailing\Services.Mailing.Tests\Services.Mailing.Tests.csproj", "{889A8863-367C-4786-92D6-23F8F6E102B6}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{E7D3B6D3-6648-4777-8348-8860B6944E0F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{476FEE4F-4CBB-437D-9676-EDEEDFFD8859}"
+	ProjectSection(SolutionItems) = preProject
+		.env = .env
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +102,18 @@ Global
 		{B0983CC3-4114-4979-8016-6F32EE656FB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0983CC3-4114-4979-8016-6F32EE656FB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0983CC3-4114-4979-8016-6F32EE656FB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10CB44F0-76DA-415E-9FA0-0C573BAC7C1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10CB44F0-76DA-415E-9FA0-0C573BAC7C1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10CB44F0-76DA-415E-9FA0-0C573BAC7C1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10CB44F0-76DA-415E-9FA0-0C573BAC7C1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{889A8863-367C-4786-92D6-23F8F6E102B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{889A8863-367C-4786-92D6-23F8F6E102B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{889A8863-367C-4786-92D6-23F8F6E102B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{889A8863-367C-4786-92D6-23F8F6E102B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7D3B6D3-6648-4777-8348-8860B6944E0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7D3B6D3-6648-4777-8348-8860B6944E0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7D3B6D3-6648-4777-8348-8860B6944E0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7D3B6D3-6648-4777-8348-8860B6944E0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +135,10 @@ Global
 		{E670BCC5-34B8-4BB6-81A4-77032958629B} = {4FC2ED61-1898-4C60-BBA8-D26B3F4F01DF}
 		{8A09FD0C-A287-4587-BFA9-2C9D269C1C38} = {ECD6B5EC-95D8-469A-A473-9FADE95909B1}
 		{B0983CC3-4114-4979-8016-6F32EE656FB2} = {ECD6B5EC-95D8-469A-A473-9FADE95909B1}
+		{55E84608-79BF-42D2-AC92-28B657B53269} = {122D5CD2-BAA8-4222-83AD-F7A8BE123C75}
+		{10CB44F0-76DA-415E-9FA0-0C573BAC7C1C} = {55E84608-79BF-42D2-AC92-28B657B53269}
+		{889A8863-367C-4786-92D6-23F8F6E102B6} = {55E84608-79BF-42D2-AC92-28B657B53269}
+		{E7D3B6D3-6648-4777-8348-8860B6944E0F} = {476FEE4F-4CBB-437D-9676-EDEEDFFD8859}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6C487B54-D768-4E9D-946C-7D06F182633A}

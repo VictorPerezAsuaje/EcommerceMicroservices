@@ -35,7 +35,9 @@ public class ShopController : Controller
         _tagService = tagService;
     }
 
-    private async Task SeedProductData()
+    [HttpPost("SeedShopData")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SeedProductData()
     {
         List<Task> tasks = new List<Task>();
 
@@ -59,6 +61,8 @@ public class ShopController : Controller
         }
 
         await Task.WhenAll(tasks);
+
+        return Ok();
     }
 
     [Route("")]

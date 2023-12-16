@@ -5,7 +5,27 @@
     <h2 class="text-center text-2xl text-zuccini-900 font-extrabold">My Account</h2>
 
     <div class="flex flex-col lg:flex-row gap-8 min-h-[50vh] p-16">
-        <div class="border border-gray-nurse-100 h-full flex-1 p-16">            
+        <div class="border border-gray-nurse-100 h-full flex-1 p-16">
+            <header class="text-center mb-8">
+                <h3 class="text-xl text-zuccini-900 font-bold mb-4">Social Login</h3>
+            </header>
+
+            <form id="externalLoginForm" asp-controller="Home" asp-action="RequestGoogleAuth" method="post" hx-boost="false" class="flex justify-center">
+                @Html.AntiForgeryToken()
+
+                <button type="submit"
+                        form="externalLoginForm"
+                        class="px-4 py-2 border flex gap-2 border-slate-200 rounded-lg text-slate-700 hover:border-slate-400 hover:text-slate-900 hover:shadow transition duration-150"
+                        name="provider"
+                        value="Google"
+                        title="Login using your Google account">
+                    <img class="w-6 h-6" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo">
+                    <span>Login with Google</span>
+                </button>
+            </form>
+
+            <hr class="my-8" />
+
             <header class="text-center mb-8">
                 <h3 class="text-xl text-zuccini-900 font-bold mb-4">Login</h3>
                 <p class="text-sm text-gray-nurse-500">
@@ -29,27 +49,6 @@
                 <button class="bg-zuccini-700 text-white font-bold text-sm p-3 hover:bg-zuccini-400 transition-all ease-in-out duration-200 w-fit" type="submit" form="loginForm">SIGN IN</button>
                 <a asp-controller="Home" asp-action="ForgotPassword" class="text-sm text-gray-nurse-700 underline underline-offset-2 hover:underline-none">Forgot your password?</a>
             </footer>
-
-            <hr class="my-8" />
-
-            <header class="text-center mb-8">
-                <h3 class="text-xl text-zuccini-900 font-bold mb-4">Or...</h3>
-            </header>
-
-            <form id="externalLoginForm" asp-controller="Home" asp-action="RequestGoogleAuth" method="post" hx-boost="false" class="flex justify-center">
-                @Html.AntiForgeryToken()
-
-                <button type="submit"
-                        form="externalLoginForm"
-                        class="px-4 py-2 border flex gap-2 border-slate-200 rounded-lg text-slate-700 hover:border-slate-400 hover:text-slate-900 hover:shadow transition duration-150"
-                        name="provider"
-                        value="Google"
-                        title="Login using your Google account">
-                    <img class="w-6 h-6" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo">
-                    <span>Login with Google</span>
-                </button>
-            </form>
-
         </div>
 
         <div class="border border-gray-nurse-100 flex-1 p-16 flex flex-col justify-between items-center gap-8 h-full">

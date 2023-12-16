@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  webclient:
+    image: webclient
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    build: 
+      dockerfile: WebClient/Dockerfile
+    environment:
+      - Services__Auth__BaseUrl=http://auth:8080
+      - Services__Catalog__BaseUrl=http://catalog:8080
+      - Services__Cart__BaseUrl=http://cart:8080
+      - Services__Order__BaseUrl=http://orders:8080
+    ports:
+      - "5900:8081"
+    depends_on:
+      - auth
+      - cart
+      - catalog
+      - orders
+
+  auth:
+    image: servicesauth
+    build: 
+      dockerfile: Services/Auth/Services.Auth/Dockerfile
+    depends_on:
+      - sqldata
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqldata;Initial Catalog=EcomMicro_Auth;TrustServerCertificate=True;User Id=${SA_USER};Password=${SA_PASSWORD}
+    ports:
+      - "5901:8081"    
+
+  cart:
+    image: servicescart
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      - sqldata
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqldata;Initial Catalog=EcomMicro_Cart;TrustServerCertificate=True;User Id=${SA_USER};Password=${SA_PASSWORD}
+    build: 
+      dockerfile: Services/Cart/Services.Cart/Dockerfile
+    ports:
+      - "5902:8081" 
+
+  catalog:
+    image: servicescatalog
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      - sqldata
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqldata;Initial Catalog=EcomMicro_Catalog;TrustServerCertificate=True;User Id=${SA_USER};Password=${SA_PASSWORD}
+    build: 
+      dockerfile: Services/Catalog/Services.Catalog/Dockerfile
+    ports:
+      - "5903:8081"
+
+  orders:
+    image: servicesorders
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      - sqldata
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqldata;Initial Catalog=EcomMicro_Orders;TrustServerCertificate=True;User Id=${SA_USER};Password=${SA_PASSWORD}
+    build: 
+      dockerfile: Services/Orders/Services.Orders/Dockerfile
+    ports:
+      - "5904:8081" 
+
+  sqldata:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqldata
+    environment:
+      - SA_PASSWORD=${SA_PASSWORD}
+      - ACCEPT_EULA=Y
+    ports:
+      - "5934:1433"
