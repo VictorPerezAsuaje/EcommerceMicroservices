@@ -34,86 +34,86 @@ This is just a learning-oriented project for me to further understand possible m
 ✍ Needs to specify requirements
 
 ### General
-[ ✅ ] Docker support 
-[ ✅ ] RabbitMQ support 
-[  ] API Versioning
-[  ] Feature Flag support
-[  ] CLI Tool for service generation
+<p>[ ✅ ] Docker support </p>
+<p>[ ✅ ] RabbitMQ support </p>
+<p>[  ] API Versioning</p>
+<p>[  ] Feature Flag support</p>
+<p>[  ] CLI Tool for service generation</p>
 
 
 ### WebClient
 -> Status pages:
-    [  ] Not Found (HTTP 404)
-    [  ] Server Error (HTTP 500)
-    [  ] Forbidden (HTTP 401)
+    <p>[  ] Not Found (HTTP 404)</p>
+    <p>[  ] Server Error (HTTP 500)</p>
+    <p>[  ] Forbidden (HTTP 401)</p>
 
 -> Account pages:
-    [  ] Profile (AuthService)
-    [  ] Order tracking (OrderService)
-    [  ] Wishlist (OrderService)
+    <p>[  ] Profile (AuthService)</p>
+    <p>[  ] Order tracking (OrderService)</p>
+    <p>[  ] Wishlist (OrderService)</p>
 
-[  ] Payment pages
+<p>[  ] Payment pages</p>
 
-[ ❓ ] Server Side Events for domain and integration events with client-specific webhooks. For instance to confirm that the order went through properly in an async fashion, allowing the client to continue using the website in the meantime. 
+<p>[ ❓ ] Server Side Events for domain and integration events with client-specific webhooks. For instance to confirm that the order went through properly in an async fashion, allowing the client to continue using the website in the meantime. </p>
 
 -> Administration pages:
-    [  ] Dashboard for order management
-    [  ] Dashboard for inventory management
-    [  ] Dashboard for finance management
-    [  ] Dashboard for traffic and logging management
-    [  ] Health & Production status testing (Watchtower)
-    [  ] User management
-    [  ] Coupon management
-    [  ] Newsletter management
-    [  ] CMS for Blog pages and service
+    <p>[  ] Dashboard for order management</p>
+    <p>[  ] Dashboard for inventory management</p>
+    <p>[  ] Dashboard for finance management</p>
+    <p>[  ] Dashboard for traffic and logging management</p>
+    <p>[  ] Health & Production status testing (Watchtower)</p>
+    <p>[  ] User management</p>
+    <p>[  ] Coupon management</p>
+    <p>[  ] Newsletter management</p>
+    <p>[  ] CMS for Blog pages and service</p>
 
 ### Auth Service
-[ ✅ ] Login with OAuth 
-[  ] Forgot password workflow
+<p>[ ✅ ] Login with OAuth </p>
+<p>[  ] Forgot password workflow</p>
 
 -> Roles:
-    [  ] Administrator
-    [  ] Client
+    <p>[  ] Administrator</p>
+    <p>[  ] Client</p>
 
 
 ### Mailing Service
-[ ✅ ] Login (internal & external) successful
-[ ✅ ] Registration successful
-[  ] Forgot password
-[  ] Order placed successfuly
+<p>[ ✅ ] Login (internal & external) successful</p>
+<p>[ ✅ ] Registration successful</p>
+<p>[  ] Forgot password</p>
+<p>[  ] Order placed successfuly</p>
 
 
 ### Order Service
-[  ] Wishlist workflow
+<p>[  ] Wishlist workflow</p>
 
 -> Payment workflow 
-    [  ] Paypal 
-    [  ] Stripe 
+    <p>[  ] Paypal </p>
+    <p>[  ] Stripe </p>
 
 
 ### Cart Service
 -> Scheduled events inside EF:
-    [ ❓ ] Auto-clear cart items depending on expiration time
+    <p>[ ❓ ] Auto-clear cart items depending on expiration time</p>
  
 
 ### Inventory Service
-[ ✍ ] Pending prototype
+<p>[ ✍ ] Pending prototype</p>
 
 
 ### Review Service
-[ ✍ ] Pending prototype
+<p>[ ✍ ] Pending prototype</p>
 
 
 ### CMS Service
-[ ✍ ] Pending prototype
+<p>[ ✍ ] Pending prototype</p>
 
 
 ### Ticketing / Support Service
-[ ✍ ] Pending prototype
+<p>[ ✍ ] Pending prototype</p>
 
 
 ### Newsletter Service
-[ ✍ ] Pending prototype
+<p>[ ✍ ] Pending prototype</p>
 
 ## Image Gallery
 
