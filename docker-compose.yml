@@ -15,6 +15,9 @@ services:
       - Services__Catalog__BaseUrl=http://catalog:8080
       - Services__Cart__BaseUrl=http://cart:8080
       - Services__Order__BaseUrl=http://orders:8080
+      - Services__Mailing__BaseUrl=http://mailing:8080
+      - RabbitMqOptions__User=${RabbitMQ_Admin}
+      - RabbitMqOptions__Password=${RabbitMQ_Password} 
     ports:
       - "5900:8081"
     depends_on:
@@ -22,6 +25,8 @@ services:
       - cart
       - catalog
       - orders
+      - mailing 
+      - rabbitmq
 
   auth:
     image: servicesauth
@@ -29,8 +34,11 @@ services:
       dockerfile: Services/Auth/Services.Auth/Dockerfile
     depends_on:
       - sqldata
+      - rabbitmq
     environment:
       - ConnectionStrings__DefaultConnection=Server=sqldata;Initial Catalog=EcomMicro_Auth;TrustServerCertificate=True;User Id=${SA_USER};Password=${SA_PASSWORD}
+      - RabbitMqOptions__User=${RabbitMQ_Admin}
+      - RabbitMqOptions__Password=${RabbitMQ_Password} 
     ports:
       - "5901:8081"    
 
@@ -43,8 +51,12 @@ services:
         max-file: "3"
     depends_on:
       - sqldata
+      - rabbitmq
+      - auth
     environment:
       - ConnectionStrings__DefaultConnection=Server=sqldata;Initial Catalog=EcomMicro_Cart;TrustServerCertificate=True;User Id=${SA_USER};Password=${SA_PASSWORD}
+      - RabbitMqOptions__User=${RabbitMQ_Admin}
+      - RabbitMqOptions__Password=${RabbitMQ_Password} 
     build: 
       dockerfile: Services/Cart/Services.Cart/Dockerfile
     ports:
@@ -59,8 +71,12 @@ services:
         max-file: "3"
     depends_on:
       - sqldata
+      - rabbitmq
+      - auth
     environment:
       - ConnectionStrings__DefaultConnection=Server=sqldata;Initial Catalog=EcomMicro_Catalog;TrustServerCertificate=True;User Id=${SA_USER};Password=${SA_PASSWORD}
+      - RabbitMqOptions__User=${RabbitMQ_Admin}
+      - RabbitMqOptions__Password=${RabbitMQ_Password} 
     build: 
       dockerfile: Services/Catalog/Services.Catalog/Dockerfile
     ports:
@@ -75,18 +91,65 @@ services:
         max-file: "3"
     depends_on:
       - sqldata
+      - rabbitmq
+      - auth
     environment:
       - ConnectionStrings__DefaultConnection=Server=sqldata;Initial Catalog=EcomMicro_Orders;TrustServerCertificate=True;User Id=${SA_USER};Password=${SA_PASSWORD}
+      - RabbitMqOptions__User=${RabbitMQ_Admin}
+      - RabbitMqOptions__Password=${RabbitMQ_Password} 
     build: 
       dockerfile: Services/Orders/Services.Orders/Dockerfile
     ports:
       - "5904:8081" 
 
+  mailing:
+    image: servicesmailing
+    container_name: Services.Mailing
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      - sqldata
+      - rabbitmq
+      - auth
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqldata;Initial Catalog=EcomMicro_Mailing;TrustServerCertificate=True;User Id=${SA_USER};Password=${SA_PASSWORD}
+      - RabbitMqOptions__User=${RabbitMQ_Admin}
+      - RabbitMqOptions__Password=${RabbitMQ_Password} 
+      - SmtpOptions__Server=${Smtp_Server}
+      - SmtpOptions__Port=${Smtp_Port}
+      - SmtpOptions__Email=${Smtp_Email}
+      - SmtpOptions__Password=${Smtp_Password}
+      - ASPNETCORE_ENVIRONMENT=Development
+    build: 
+      dockerfile: Services/Mailing/Services.Mailing/Dockerfile
+    ports:
+      - "5905:8081"  
+
   sqldata:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqldata
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       - SA_PASSWORD=${SA_PASSWORD}
       - ACCEPT_EULA=Y
     ports:
       - "5934:1433"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    ports:
+      - "15672:15672"
+      - "5672:5672"

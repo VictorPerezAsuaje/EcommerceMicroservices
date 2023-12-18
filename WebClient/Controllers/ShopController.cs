@@ -62,7 +62,7 @@ public class ShopController : Controller
 
         await Task.WhenAll(tasks);
 
-        return Ok();
+        return RedirectToAction(nameof(Index));
     }
 
     [Route("")]

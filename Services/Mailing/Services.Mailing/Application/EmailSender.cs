@@ -2,12 +2,13 @@
 using System.Net;
 using Microsoft.Extensions.Options;
 using static Services.Mailing.Application.EmailSender;
+using Services.Mailing.Contracts;
 
 namespace Services.Mailing.Application;
 
 public interface IEmailSender
 {
-    EmailReady Configure(Action<EmailDTO> email);
+    EmailReady Configure(SendEmailRequest email);
 }
 
 public class EmailSender : IEmailSender
@@ -28,11 +29,8 @@ public class EmailSender : IEmailSender
         _smtpClient.EnableSsl = true;
     }
 
-    public EmailReady Configure(Action<EmailDTO> options)
+    public EmailReady Configure(SendEmailRequest email)
     {
-        EmailDTO email = new EmailDTO();
-        options(email);
-
         MailMessage mailMessage = new MailMessage();
         mailMessage.From = new MailAddress(_smtpOptions.Email, "Ecommerce Support");
 

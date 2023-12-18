@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using RabbitMQ.Client;
+using Shared.MessageBus;
 using System.Security.Claims;
 using WebClient;
 using WebClient.Services;
@@ -35,8 +37,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         opts.CallbackPath = "/oauth/google";
     });
 
+
 // AuthService
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
+builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMqOptions"));
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // CatalogService
@@ -47,9 +51,14 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 // CartService
 builder.Services.AddScoped<ICartService, CartService>();
 
-// CartService
+// OrderService
 builder.Services.AddScoped<IOrderService, OrderService>();
 
+builder.Services.AddServiceBus(x =>
+{
+    x.User = builder.Configuration.GetSection(key: "RabbitMqOptions:User").Value;
+    x.Password = builder.Configuration.GetSection(key: "RabbitMqOptions:Password").Value;
+});
 
 var app = builder.Build();
 

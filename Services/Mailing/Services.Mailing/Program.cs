@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Services.Mailing.Application;
+using Shared.MessageBus;
+using RabbitMQ.Client;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +26,8 @@ builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("SmtpOp
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
 
 var jwtOptions = new JwtOptions();
-builder.Configuration.GetSection("JwtOptions").Bind(jwtOptions);
+builder.Configuration.GetSection(key: "JwtOptions").Bind(jwtOptions);
+
 
 builder.Services
     .AddAuthentication(x =>
@@ -45,6 +49,16 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+builder.Services.AddServiceBus(x =>
+{
+    x.User = builder.Configuration.GetSection(key: "RabbitMqOptions:User").Value;
+    x.Password = builder.Configuration.GetSection(key: "RabbitMqOptions:Password").Value;
+
+    x.AddConsumer<EmailConsumer>("email-queue");
+}); 
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

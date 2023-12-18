@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Services.Auth.Application;
 using Services.Auth.Domain;
 using Services.Auth.Infrastructure;
-using System.Security.Claims;
+using Shared.MessageBus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +56,12 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOpti
 
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddServiceBus(x =>
+{
+    x.User = builder.Configuration.GetSection(key: "RabbitMqOptions:User").Value;
+    x.Password = builder.Configuration.GetSection(key: "RabbitMqOptions:Password").Value;
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

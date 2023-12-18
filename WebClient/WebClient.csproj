@@ -14,6 +14,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+		<PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
 	</ItemGroup>
 
@@ -30,5 +31,11 @@
 
 	<ItemGroup>
 	  <Folder Include="Services\Inventory\" />
+	  <Folder Include="Services\Mailing\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Integration\Shared.MessageBus\Shared.MessageBus.csproj" />
+	  <ProjectReference Include="..\Services\Mailing\Services.Mailing.Contracts\Services.Mailing.Contracts.csproj" />
 	</ItemGroup>
 </Project>

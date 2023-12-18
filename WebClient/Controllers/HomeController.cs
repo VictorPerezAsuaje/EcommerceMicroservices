@@ -1,13 +1,18 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using RabbitMQ.Client;
+using Services.Mailing.Contracts;
+using Shared.MessageBus;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
+using System.Text;
 using WebClient.Models;
 using WebClient.Services.Auth;
 using WebClient.Services.Cart;
@@ -21,12 +26,14 @@ public class HomeController : Controller
     IAuthService _authService;
     ICartService _cartService;
     ITokenProvider _tokenProvider;
+    IPublishEndpoint _publisher;
 
-    public HomeController(IAuthService authenticationService, ITokenProvider tokenProvider, ICartService cartService)
+    public HomeController(IAuthService authenticationService, ITokenProvider tokenProvider, ICartService cartService, IPublishEndpoint publisher)
     {
         _authService = authenticationService;
         _tokenProvider = tokenProvider;
         _cartService = cartService;
+        _publisher = publisher;
     }
 
     [Route("")]
@@ -95,6 +102,8 @@ public class HomeController : Controller
                 x.Message = response.Error;
                 x.Icon = NotificationIcon.error;
             });
+
+            return Redirect(returnUrl ?? "/");
         }
 
         this.InvokeNotification(x =>
