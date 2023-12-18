@@ -50,11 +50,21 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{476FEE4F-4CBB-437D-9676-EDEEDFFD8859}"
 	ProjectSection(SolutionItems) = preProject
 		.env = .env
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.MessageBus", "Integration\Shared.MessageBus\Shared.MessageBus.csproj", "{95A2E3C6-66D6-4811-81A2-3B97C59F1CD8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Mailing.Contracts", "Services\Mailing\Services.Mailing.Contracts\Services.Mailing.Contracts.csproj", "{5704F25C-4B6E-4668-AE8B-4CBA6559B47B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{A7031282-AE31-44A3-B949-80DA29934AE5}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\home-page.JPG = Docs\home-page.JPG
+		Docs\login-page.JPG = Docs\login-page.JPG
+		Docs\place-order-page.JPG = Docs\place-order-page.JPG
+		Docs\product-page.JPG = Docs\product-page.JPG
+		Docs\shop-page.JPG = Docs\shop-page.JPG
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
